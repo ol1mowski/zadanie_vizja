@@ -1,6 +1,8 @@
 import React from 'react';
+import { useUser } from '../../../contexts/UserContext';
 
 export const WelcomeComponent: React.FC = () => {
+  const { switchToStudent, switchToAdmin, switchToCandidate } = useUser();
   return (
     <div className="text-center">
       <h1 className="text-4xl font-bold text-gray-900 mb-8">
@@ -13,13 +15,22 @@ export const WelcomeComponent: React.FC = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200">
+          <button 
+            onClick={switchToStudent}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200"
+          >
             Zaloguj się jako Student
           </button>
-          <button className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200">
+          <button 
+            onClick={switchToCandidate}
+            className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200"
+          >
             Zgłoś wizytę jako Kandydat
           </button>
-          <button className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200">
+          <button 
+            onClick={switchToAdmin}
+            className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200"
+          >
             Zaloguj się jako Administrator
           </button>
         </div>

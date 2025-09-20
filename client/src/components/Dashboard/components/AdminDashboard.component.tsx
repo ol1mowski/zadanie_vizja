@@ -1,15 +1,25 @@
 import React from 'react';
+import { useUser } from '../../../contexts/UserContext';
 
 export const AdminDashboard: React.FC = () => {
+  const { logout } = useUser();
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Panel Administratora
-        </h1>
-        <p className="text-gray-600">
-          Zarządzaj rezerwacjami i przypisuj wizyty do siebie
-        </p>
+      <div className="mb-8 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Panel Administratora
+          </h1>
+          <p className="text-gray-600">
+            Zarządzaj rezerwacjami i przypisuj wizyty do siebie
+          </p>
+        </div>
+        <button 
+          onClick={logout}
+          className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+        >
+          Wyloguj
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

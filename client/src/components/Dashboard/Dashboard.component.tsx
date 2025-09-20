@@ -1,15 +1,13 @@
 import React from 'react';
 import { UserType } from '../../types/user';
+import { useUser } from '../../contexts/UserContext';
 import { WelcomeComponent } from './components/WelcomeComponent.component';
 import { StudentDashboard } from './components/StudentDashboard.component';
 import { AdminDashboard } from './components/AdminDashboard.component';
 import { CandidateDashboard } from './components/CandidateDashboard.component';
 
-interface DashboardProps {
-  userType: UserType;
-}
-
-export const Dashboard: React.FC<DashboardProps> = ({ userType }) => {
+export const Dashboard: React.FC = () => {
+  const { userType } = useUser();
   const renderDashboard = () => {
     switch (userType) {
       case UserType.UNAUTHENTICATED:

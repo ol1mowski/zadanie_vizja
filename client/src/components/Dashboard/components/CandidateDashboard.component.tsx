@@ -1,18 +1,53 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useUser } from '../../../contexts/UserContext';
+import { CandidateFormPopup } from './CandidateFormPopup.component';
+import { CandidateSuccessScreen } from './CandidateSuccessScreen.component';
+import type { CandidateFormData } from './CandidateFormPopup.component';
 
 export const CandidateDashboard: React.FC = () => {
+  const { logout } = useUser();
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [showSuccessScreen, setShowSuccessScreen] = useState(false);
+  const [reservationData, setReservationData] = useState<any>(null);
+
+  const handleFormSubmit = (data: CandidateFormData) => {
+    console.log('Formularz kandydata:', data);
+
+    setReservationData({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      subject: data.subject,
+      preferredDate: data.preferredDate,
+      preferredTime: data.preferredTime
+    });
+    setShowSuccessScreen(true);
+  };
+
+  if (showSuccessScreen && reservationData) {
+    return <CandidateSuccessScreen reservationData={reservationData} />;
+  }
+
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Panel Kandydata
-        </h1>
-        <p className="text-gray-600">
-          Zarezerwuj wizytę wypełniając formularz z danymi identyfikacyjnymi
-        </p>
+      <div className="mb-8 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Panel Kandydata
+          </h1>
+          <p className="text-gray-600">
+            Zarezerwuj wizytę wypełniając formularz z danymi identyfikacyjnymi
+          </p>
+        </div>
+        <button 
+          onClick={logout}
+          className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+        >
+          Powrót
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="max-w-md mx-auto">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200 hover:shadow-lg transition duration-200 cursor-pointer">
           <div className="flex items-center mb-4">
             <div className="bg-blue-500 p-3 rounded-lg">
@@ -31,39 +66,21 @@ export const CandidateDashboard: React.FC = () => {
             <div className="text-xs text-blue-600 mb-2">Wymagane dane:</div>
             <ul className="text-xs text-blue-600 space-y-1">
               <li>• Imię i nazwisko</li>
+              <li>• PESEL</li>
               <li>• Adres email</li>
               <li>• Numer telefonu</li>
               <li>• Temat wizyty</li>
+              <li>• Opis zgłoszenia</li>
             </ul>
           </div>
-          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+          <button 
+            onClick={() => setIsFormOpen(true)}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+          >
             Rozpocznij Rezerwację
           </button>
         </div>
 
-        <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg border border-green-200 hover:shadow-lg transition duration-200 cursor-pointer">
-          <div className="flex items-center mb-4">
-            <div className="bg-green-500 p-3 rounded-lg">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-green-900 ml-3">
-              Status Rezerwacji
-            </h3>
-          </div>
-          <p className="text-green-700 text-sm mb-4">
-            Sprawdź status swojej rezerwacji
-          </p>
-          <div className="mb-4">
-            <div className="bg-green-200 text-green-800 px-3 py-2 rounded-lg text-sm font-medium">
-              Brak aktywnych rezerwacji
-            </div>
-          </div>
-          <button className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
-            Sprawdź Status
-          </button>
-        </div>
       </div>
 
       <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-6">
@@ -80,44 +97,11 @@ export const CandidateDashboard: React.FC = () => {
             <ul className="text-yellow-800 space-y-2 text-sm">
               <li>• Rezerwacja wizyty nie wymaga konta użytkownika</li>
               <li>• Wszystkie pola formularza są obowiązkowe</li>
+              <li>• PESEL musi być prawidłowy (11 cyfr z poprawną sumą kontrolną)</li>
               <li>• Po złożeniu rezerwacji otrzymasz potwierdzenie na email</li>
               <li>• Status rezerwacji możesz sprawdzić podając numer referencyjny</li>
               <li>• Wizyty są przypisywane przez pracowników biura</li>
             </ul>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Najbliższe dostępne terminy
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition duration-200 cursor-pointer">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-600">Poniedziałek</span>
-              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">Dostępne</span>
-            </div>
-            <p className="text-lg font-semibold text-gray-900">15 stycznia</p>
-            <p className="text-sm text-gray-600">10:00 - 11:00</p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition duration-200 cursor-pointer">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-600">Wtorek</span>
-              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">Dostępne</span>
-            </div>
-            <p className="text-lg font-semibold text-gray-900">16 stycznia</p>
-            <p className="text-sm text-gray-600">14:00 - 15:00</p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition duration-200 cursor-pointer">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-600">Środa</span>
-              <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Wolne</span>
-            </div>
-            <p className="text-lg font-semibold text-gray-900">17 stycznia</p>
-            <p className="text-sm text-gray-600">09:00 - 10:00</p>
           </div>
         </div>
       </div>
@@ -151,6 +135,12 @@ export const CandidateDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <CandidateFormPopup
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        onSubmit={handleFormSubmit}
+      />
     </div>
   );
 };
