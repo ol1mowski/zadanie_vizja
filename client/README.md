@@ -1,69 +1,166 @@
-# React + TypeScript + Vite
+# Internetowy Portal Rezerwacji Wizyt
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Opis projektu
 
-Currently, two official plugins are available:
+Portal umożliwiający rezerwację wizyt interesantów w biurze. System obsługuje różne role użytkowników: studentów, kandydatów na studia, pracowników i administratorów.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Funkcjonalności
 
-## Expanding the ESLint configuration
+### Dla Studentów
+- Logowanie do systemu
+- Rezerwacja wizyt z wyborem terminu i tematu
+- Monitorowanie swoich przyszłych i przeszłych wizyt
+- Przeglądanie profilu
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Dla Kandydatów
+- Wypełnianie formularza rezerwacji z danymi identyfikacyjnymi
+- Podawanie terminu wizyty, opisu i opcjonalnych załączników
+- Potwierdzenie rezerwacji z informacją o wysłaniu emaila
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Dla Pracowników
+- Przeglądanie dostępnych rezerwacji
+- Przypisywanie wizyt do siebie
+- Zarządzanie swoimi wizytami
+- Informacje o odwołanych wizytach
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Dla Administratorów
+- Pełny dostęp do wszystkich funkcjonalności
+- Zarządzanie użytkownikami
+- Nadzór nad systemem
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Technologie
+
+- **React 19** - Najnowsza wersja biblioteki React
+- **TypeScript** - Typowanie statyczne dla lepszej jakości kodu
+- **Vite** - Szybki bundler i serwer deweloperski
+- **Tailwind CSS 3.4** - Framework CSS do stylowania
+- **Vitest** - Framework testowy
+- **Testing Library** - Biblioteka do testowania komponentów React
+
+## Architektura
+
+### Struktura komponentów
+```
+src/
+├── components/
+│   ├── Header/           # Komponent nagłówka z nawigacją
+│   ├── AuthDemo/         # Komponent demonstracyjny uwierzytelniania
+│   └── icons/            # Komponenty ikon SVG
+├── hooks/
+│   └── useAuth.ts        # Hook do zarządzania uwierzytelnianiem
+├── types/
+│   └── auth.ts           # Definicje typów TypeScript
+└── __tests__/            # Pliki testowe
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Wzorce projektowe
+- **Custom Hooks** - Logika biznesowa wydzielona do hooków
+- **Component Composition** - Komponenty złożone z mniejszych części
+- **Type Safety** - Pełne typowanie z TypeScript
+- **Separation of Concerns** - Rozdzielenie odpowiedzialności
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Instalacja i uruchomienie
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Wymagania
+- Node.js 20.5.0 lub nowszy
+- npm 9.8.0 lub nowszy
+
+### Kroki instalacji
+
+1. **Sklonuj repozytorium**
+   ```bash
+   git clone <repository-url>
+   cd zadanie_vizja/client
+   ```
+
+2. **Zainstaluj zależności**
+   ```bash
+   npm install
+   ```
+
+3. **Uruchom serwer deweloperski**
+   ```bash
+   npm run dev
+   ```
+
+4. **Otwórz aplikację w przeglądarce**
+   ```
+   http://localhost:5173
+   ```
+
+## Dostępne skrypty
+
+- `npm run dev` - Uruchomienie serwera deweloperskiego
+- `npm run build` - Budowanie aplikacji do produkcji
+- `npm run preview` - Podgląd zbudowanej aplikacji
+- `npm run test` - Uruchomienie testów w trybie watch
+- `npm run test:run` - Uruchomienie testów jednorazowo
+- `npm run test:ui` - Uruchomienie interfejsu testów Vitest
+- `npm run lint` - Sprawdzenie kodu linterem
+
+## Testowanie
+
+### Uruchomienie testów
+```bash
+npm run test:run
 ```
+
+### Testy obejmują
+- Testy komponentów React
+- Testy logiki uwierzytelniania
+- Testy responsywności
+- Testy integracyjne
+
+## Demo uwierzytelniania
+
+Aplikacja zawiera komponent demonstracyjny do testowania różnych ról użytkowników:
+
+### Dostępne konta testowe
+- **Student**: `student@example.com`
+- **Pracownik**: `employee@example.com`
+- **Administrator**: `admin@example.com`
+
+Hasło dla wszystkich kont: `password`
+
+## Responsywność
+
+Header i cała aplikacja są w pełni responsywne:
+- **Mobile First** - Projektowanie zaczynające się od urządzeń mobilnych
+- **Breakpoints**: sm (640px), md (768px), lg (1024px), xl (1280px)
+- **Mobile Menu** - Hamburger menu na urządzeniach mobilnych
+- **Adaptive Navigation** - Nawigacja dostosowana do roli użytkownika
+
+## Bezpieczeństwo
+
+- **Type Safety** - TypeScript zapobiega błędom typów
+- **Input Validation** - Walidacja danych wejściowych
+- **Role-based Access** - Dostęp oparty na rolach użytkowników
+- **Secure Authentication** - Bezpieczny system uwierzytelniania
+
+## Rozszerzalność
+
+System został zaprojektowany z myślą o łatwej rozszerzalności:
+- **Modularna architektura** - Łatwe dodawanie nowych komponentów
+- **Type-safe API** - Bezpieczne interfejsy API
+- **Plugin Architecture** - Możliwość dodawania nowych funkcjonalności
+- **Adaptable Design** - Łatwa adaptacja do innych systemów
+
+## Kontrybucja
+
+1. Fork repozytorium
+2. Utwórz branch dla nowej funkcjonalności (`git checkout -b feature/nowa-funkcjonalnosc`)
+3. Commit zmian (`git commit -am 'Dodaj nową funkcjonalność'`)
+4. Push do brancha (`git push origin feature/nowa-funkcjonalnosc`)
+5. Utwórz Pull Request
+
+## Licencja
+
+Ten projekt jest licencjonowany na licencji MIT - zobacz plik [LICENSE](LICENSE) dla szczegółów.
+
+## Autor
+
+SystemLMS - https://github.com/SystemLMS
+
+## Wsparcie
+
+W przypadku problemów lub pytań, utwórz issue w repozytorium GitHub.
