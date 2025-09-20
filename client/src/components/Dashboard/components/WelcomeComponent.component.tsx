@@ -1,8 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useUser } from '../../../contexts/UserContext';
+import { LoginForm } from './LoginForm';
+import type { LoginFormData } from './LoginForm';
 
 export const WelcomeComponent: React.FC = () => {
   const { switchToStudent, switchToAdmin, switchToCandidate } = useUser();
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [loginUserType, setLoginUserType] = useState<'student' | 'admin'>('student');
+
+  const handleLoginClick = (userType: 'student' | 'admin') => {
+    setLoginUserType(userType);
+    setIsLoginOpen(true);
+  };
+
+  const handleLoginSubmit = (data: LoginFormData) => {
+    console.log('Dane logowania:', data);
+
+    if (data.userType === 'student') {
+      switchToStudent();
+    } else {
+      switchToAdmin();
+    }
+  };
+
   return (
     <div className="text-center">
       <h1 className="text-4xl font-bold text-gray-900 mb-8">
@@ -16,7 +36,7 @@ export const WelcomeComponent: React.FC = () => {
         
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <button 
-            onClick={switchToStudent}
+            onClick={() => handleLoginClick('student')}
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200"
           >
             Zaloguj się jako Student
@@ -28,7 +48,7 @@ export const WelcomeComponent: React.FC = () => {
             Zgłoś wizytę jako Kandydat
           </button>
           <button 
-            onClick={switchToAdmin}
+            onClick={() => handleLoginClick('admin')}
             className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200"
           >
             Zaloguj się jako Administrator
@@ -80,6 +100,13 @@ export const WelcomeComponent: React.FC = () => {
           </p>
         </div>
       </div>
+
+      <LoginForm
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        onSubmit={handleLoginSubmit}
+        userType={loginUserType}
+      />
     </div>
   );
 };
