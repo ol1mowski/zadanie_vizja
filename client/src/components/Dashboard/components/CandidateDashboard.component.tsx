@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useUser } from '../../../contexts/UserContext';
-import { CandidateFormPopup } from './CandidateFormPopup.component';
+import { CandidateFormPopup } from './CandidateFormPopup';
+import type { CandidateFormData } from './CandidateFormPopup';
 import { CandidateSuccessScreen } from './CandidateSuccessScreen.component';
-import type { CandidateFormData } from './CandidateFormPopup.component';
 
 export const CandidateDashboard: React.FC = () => {
   const { logout } = useUser();
