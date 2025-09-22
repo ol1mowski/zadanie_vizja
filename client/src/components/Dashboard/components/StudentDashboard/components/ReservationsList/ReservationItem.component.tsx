@@ -1,6 +1,6 @@
 import React from 'react';
-import { type ReservationResponse } from '../../../../../api/reservations';
-import { AttachmentsList } from '../../Attachments/AttachmentsList';
+import { type ReservationResponse } from '../../../../../../api/reservations';
+import { AttachmentsList } from '../../../Attachments/AttachmentsList.component';
 
 type Props = {
   reservation: ReservationResponse;

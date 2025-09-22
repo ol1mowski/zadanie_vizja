@@ -28,7 +28,7 @@ export const PersonalInfoFields: React.FC<Props> = ({ firstName, lastName, pesel
           <input type="text" name="pesel" value={pesel} onChange={onChange} pattern="[0-9]{11}" required className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Telefon *</n-label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Telefon *</label>
           <input type="tel" name="phone" value={phone} onChange={onChange} required className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
         </div>
       </div>

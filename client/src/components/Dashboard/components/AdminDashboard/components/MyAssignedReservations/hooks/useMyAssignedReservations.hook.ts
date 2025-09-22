@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { reservationsApi, type ReservationResponse } from '../../../../../../api/reservations';
+import { reservationsApi, type ReservationResponse } from '../../../../../../../api/reservations';
 
 export const useMyAssignedReservations = () => {
   const [reservations, setReservations] = useState<ReservationResponse[]>([]);

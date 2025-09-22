@@ -1,10 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useUser } from '../../../../contexts/UserContext.tsx';
 import { CreateReservationForm } from './components/CreateReservationForm.component.tsx';
 import { ReservationsList } from './components/ReservationsList.component.tsx';
 import { StudentQuickActions } from './components/StudentQuickActions.component.tsx';
-import { StudentStatsCards } from './components/StudentStatsCards.component.tsx';
-import { useStudentStats } from './hooks/StudentDashboard.hook.ts';
 
 
 type ViewType = 'dashboard' | 'create' | 'reservations';
@@ -12,17 +10,9 @@ type ViewType = 'dashboard' | 'create' | 'reservations';
 export const StudentDashboard: React.FC = () => {
   const { logout } = useUser();
   const [currentView, setCurrentView] = useState<ViewType>('dashboard');
-  const { stats, refreshStats } = useStudentStats({ enabled: true });
-
-  useEffect(() => {
-    if (currentView === 'dashboard') {
-      void refreshStats();
-    }
-  }, [currentView, refreshStats]);
 
   const handleCreateSuccess = () => {
     setCurrentView('dashboard');
-    void refreshStats();
   };
 
   if (currentView === 'create') {
@@ -62,12 +52,6 @@ export const StudentDashboard: React.FC = () => {
       <StudentQuickActions
         onCreate={() => setCurrentView('create')}
         onOpenReservations={() => setCurrentView('reservations')}
-      />
-
-      <StudentStatsCards
-        upcoming={stats.upcoming}
-        completed={stats.completed}
-        pending={stats.pending}
       />
     </div>
   );

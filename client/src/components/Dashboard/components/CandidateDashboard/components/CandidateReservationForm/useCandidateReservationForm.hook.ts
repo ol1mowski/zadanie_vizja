@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { reservationsApi } from '../../../../../api/reservations';
+import { reservationsApi } from '../../../../../../api/reservations';
 
 export interface CandidateFormData {
   firstName: string;
