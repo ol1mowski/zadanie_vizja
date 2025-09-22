@@ -1,10 +1,3 @@
-import type { User } from '../types/types';
-
-export const MOCK_USER: User = {
-  name: 'Jan Kowalski',
-  email: 'jan.kowalski@example.com',
-  role: 'Student'
-};
 
 export const MOBILE_MENU_MAX_HEIGHT = 'max-h-96';
 export const MOBILE_MENU_MIN_HEIGHT = 'max-h-0';
