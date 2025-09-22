@@ -14,9 +14,7 @@ export const useLoginForm = (userType: 'student' | 'admin') => {
     const newErrors: Partial<LoginFormData> = {};
     
     if (!formData.email.trim()) {
-      newErrors.email = 'Email jest wymagany';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Nieprawidłowy format email';
+      newErrors.email = 'Login jest wymagany';
     }
     
     if (!formData.password.trim()) {
@@ -44,10 +42,10 @@ export const useLoginForm = (userType: 'student' | 'admin') => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent, onSubmit: (data: LoginFormData) => void, onClose: () => void) => {
+  const handleSubmit = async (e: React.FormEvent, onSubmit: (data: LoginFormData) => void, onClose: () => void) => {
     e.preventDefault();
     if (validateForm()) {
-      onSubmit(formData);
+      await Promise.resolve(onSubmit(formData));
       onClose();
     }
   };

@@ -1,7 +1,10 @@
 package com.example.zadanieVizja.controller;
 
+import java.time.Duration;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -9,6 +12,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +36,15 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${jwt.cookie.name:JWT}")
+    private String cookieName;
+    @Value("${jwt.cookie.secure:false}")
+    private boolean cookieSecure;
+    @Value("${jwt.cookie.max-age:3600}")
+    private int cookieMaxAge;
+    @Value("${jwt.cookie.same-site:Lax}")
+    private String cookieSameSite;
+
     public AuthController(AuthenticationManager authenticationManager, JwtService jwtService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
@@ -51,7 +65,51 @@ public class AuthController {
 
         User user = userRepository.findByUsername(req.username()).orElseThrow();
         String token = jwtService.generateToken(user.getUsername(), Map.of("role", user.getRole().name()));
-        return ResponseEntity.ok(Map.of("token", token));
+
+        ResponseCookie cookie = ResponseCookie.from(cookieName, token)
+                .httpOnly(true)
+                .secure(cookieSecure)
+                .path("/")
+                .maxAge(Duration.ofSeconds(cookieMaxAge))
+                .sameSite(cookieSameSite)
+                .build();
+
+        return ResponseEntity.ok()
+                .header("Set-Cookie", cookie.toString())
+                .body(Map.of(
+                        "username", user.getUsername(),
+                        "role", user.getRole().name()
+                ));
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        ResponseCookie cookie = ResponseCookie.from(cookieName, "")
+                .httpOnly(true)
+                .secure(cookieSecure)
+                .path("/")
+                .maxAge(Duration.ZERO)
+                .sameSite(cookieSameSite)
+                .build();
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.noContent().header("Set-Cookie", cookie.toString()).build();
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<Map<String, String>> getCurrentUser() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return ResponseEntity.status(401).build();
+        }
+        String username = auth.getName();
+        String role = auth.getAuthorities().stream()
+                .findFirst()
+                .map(authority -> authority.getAuthority().replace("ROLE_", ""))
+                .orElse("UNKNOWN");
+        return ResponseEntity.ok(Map.of(
+                "username", username,
+                "role", role
+        ));
     }
 }
 

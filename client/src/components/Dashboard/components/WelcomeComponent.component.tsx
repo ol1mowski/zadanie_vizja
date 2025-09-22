@@ -4,7 +4,8 @@ import { LoginForm } from './LoginForm';
 import type { LoginFormData } from './LoginForm';
 
 export const WelcomeComponent: React.FC = () => {
-  const { switchToStudent, switchToAdmin, switchToCandidate } = useUser();
+  const { login } = useUser();
+  const switchToCandidate = () => window.location.assign('/candidate');
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [loginUserType, setLoginUserType] = useState<'student' | 'admin'>('student');
 
@@ -13,14 +14,10 @@ export const WelcomeComponent: React.FC = () => {
     setIsLoginOpen(true);
   };
 
-  const handleLoginSubmit = (data: LoginFormData) => {
-    console.log('Dane logowania:', data);
-
-    if (data.userType === 'student') {
-      switchToStudent();
-    } else {
-      switchToAdmin();
-    }
+  const handleLoginSubmit = async (data: LoginFormData) => {
+    await login({ email: data.email, password: data.password, userType: data.userType });
+    if (data.userType === 'student') window.location.assign('/student');
+    else window.location.assign('/admin');
   };
 
   return (

@@ -1,6 +1,7 @@
 package com.example.zadanieVizja.security;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,8 +17,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.util.List;
-
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -30,9 +29,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        String token = null;
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
+            token = authHeader.substring(7);
+        }
+        if (token == null && request.getCookies() != null) {
+            for (var c : request.getCookies()) {
+                if ("JWT".equals(c.getName()) && StringUtils.hasText(c.getValue())) {
+                    token = c.getValue();
+                    break;
+                }
+            }
+        }
+        if (token != null) {
             try {
                 Claims claims = jwtService.parse(token);
                 String username = claims.getSubject();

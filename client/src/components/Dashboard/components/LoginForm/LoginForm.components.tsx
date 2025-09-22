@@ -155,6 +155,21 @@ export const LoginFormInfo: React.FC<LoginFormInfoProps> = ({ userType }) => {
       <p className="text-gray-600 text-sm mb-4">
         {info.description}
       </p>
+      <div className="bg-white border rounded-md p-3 mb-4 text-sm text-gray-700">
+        <p className="font-semibold mb-1">Dane testowe do logowania:</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <span className="text-gray-500">Student:</span>
+            <div>login: <code className="bg-gray-100 px-1 rounded">student1@example.edu</code></div>
+            <div>hasło: <code className="bg-gray-100 px-1 rounded">Qwerty123!@#</code></div>
+          </div>
+          <div>
+            <span className="text-gray-500">Administrator:</span>
+            <div>login: <code className="bg-gray-100 px-1 rounded">admin1@example.edu</code></div>
+            <div>hasło: <code className="bg-gray-100 px-1 rounded">Qwerty123!@#</code></div>
+          </div>
+        </div>
+      </div>
       <div className="space-y-2">
         {info.features.map((feature, index) => (
           <div key={index} className="flex items-center text-sm text-gray-600">

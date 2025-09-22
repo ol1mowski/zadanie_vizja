@@ -4,6 +4,8 @@ import { WelcomeComponent } from './components/WelcomeComponent.component';
 import { StudentDashboard } from './components/StudentDashboard.component';
 import { AdminDashboard } from './components/AdminDashboard.component';
 import { CandidateDashboard } from './components/CandidateDashboard.component';
+import { ProtectedRoute } from '../ProtectedRoute';
+import { UserType } from '../../types/user';
 
 export const Dashboard: React.FC = () => {
   return (
@@ -13,8 +15,16 @@ export const Dashboard: React.FC = () => {
           <div className="px-4 py-5 sm:p-6">
             <Routes>
               <Route path="/" element={<WelcomeComponent />} />
-              <Route path="/student" element={<StudentDashboard />} />
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/student" element={
+                <ProtectedRoute requiredRole={UserType.STUDENT}>
+                  <StudentDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin" element={
+                <ProtectedRoute requiredRole={UserType.ADMIN}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
               <Route path="/candidate" element={<CandidateDashboard />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

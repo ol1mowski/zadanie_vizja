@@ -57,13 +57,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               
               <form onSubmit={handleFormSubmit} className="space-y-6">
                 <LoginFormField
-                  label="Email"
+                  label="Login (email lub nazwa użytkownika)"
                   name="email"
-                  type="email"
+                  type="text"
                   value={formData.email}
                   onChange={handleInputChange}
                   error={errors.email}
-                  placeholder="Wprowadź swój email"
+                  placeholder="student1 / admin1 lub e-mail"
                   required
                 />
                 

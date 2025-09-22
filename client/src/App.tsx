@@ -6,17 +6,17 @@ import { BrowserRouter } from 'react-router-dom';
 
 const App: React.FC = () => {
   return (
-    <UserProvider>
-      <BrowserRouter>
-        <div className="min-h-screen bg-gray-50">
-          <Header />
-          <main>
-            <Dashboard />
-          </main>
-          <Footer />
-        </div>
-      </BrowserRouter>
-    </UserProvider>
+      <UserProvider>
+        <BrowserRouter>
+          <div className="min-h-screen bg-gray-50">
+            <Header />
+            <main>
+              <Dashboard />
+            </main>
+            <Footer />
+          </div>
+        </BrowserRouter>
+      </UserProvider>
   );
 };
 
