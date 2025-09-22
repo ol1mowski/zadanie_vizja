@@ -31,31 +31,4 @@ public class NotificationController {
         return ResponseEntity.ok(notifications);
     }
 
-    @GetMapping("/unread")
-    public ResponseEntity<List<NotificationResponse>> getUnreadNotifications(Authentication auth) {
-        String username = auth.getName();
-        List<NotificationResponse> notifications = notificationService.getUnreadNotifications(username);
-        return ResponseEntity.ok(notifications);
-    }
-
-    @GetMapping("/unread/count")
-    public ResponseEntity<Map<String, Long>> getUnreadCount(Authentication auth) {
-        String username = auth.getName();
-        long count = notificationService.getUnreadCount(username);
-        return ResponseEntity.ok(Map.of("count", count));
-    }
-
-    @PutMapping("/{id}/read")
-    public ResponseEntity<Void> markAsRead(@PathVariable Long id, Authentication auth) {
-        String username = auth.getName();
-        notificationService.markAsRead(username, id);
-        return ResponseEntity.ok().build();
-    }
-
-    @PutMapping("/read-all")
-    public ResponseEntity<Void> markAllAsRead(Authentication auth) {
-        String username = auth.getName();
-        notificationService.markAllAsRead(username);
-        return ResponseEntity.ok().build();
-    }
 }

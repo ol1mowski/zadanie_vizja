@@ -57,7 +57,7 @@ public class NotificationServiceImpl implements NotificationService {
             .title(title)
             .message(message)
             .relatedReservation(reservation)
-            .isRead(false)
+            .isRead(false) // Keep for compatibility, but not used in UI
             .createdAt(LocalDateTime.now())
             .build();
 
@@ -76,54 +76,6 @@ public class NotificationServiceImpl implements NotificationService {
             .collect(Collectors.toList());
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<NotificationResponse> getUnreadNotifications(String username) {
-        User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
-        
-        return notificationRepository.findByRecipientAndIsReadFalseOrderByCreatedAtDesc(user)
-            .stream()
-            .map(this::toResponse)
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public long getUnreadCount(String username) {
-        User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
-        
-        return notificationRepository.countByRecipientAndIsReadFalse(user);
-    }
-
-    @Override
-    public void markAsRead(String username, Long notificationId) {
-        User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
-        
-        Notification notification = notificationRepository.findById(notificationId)
-            .orElseThrow(() -> new IllegalArgumentException("Notification not found: " + notificationId));
-        
-        if (!notification.getRecipient().equals(user)) {
-            throw new IllegalStateException("User can only mark their own notifications as read");
-        }
-        
-        notification.setIsRead(true);
-        notificationRepository.save(notification);
-    }
-
-    @Override
-    public void markAllAsRead(String username) {
-        User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
-        
-        List<Notification> unreadNotifications = notificationRepository
-            .findByRecipientAndIsReadFalseOrderByCreatedAtDesc(user);
-        
-        unreadNotifications.forEach(notification -> notification.setIsRead(true));
-        notificationRepository.saveAll(unreadNotifications);
-    }
 
     private NotificationResponse toResponse(Notification notification) {
         return new NotificationResponse(
