@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { reservationsApi, type ReservationResponse } from '../../../../api/reservations';
-import { AttachmentsList } from '../AttachmentsList';
-import { CancelConfirmModal } from '../CancelConfirmModal';
+import { AttachmentsList } from '../Attachments/AttachmentsList';
+import { CancelConfirmModal } from '../Shared/CancelConfirmModal';
 
 interface ReservationsListProps {
   onBack: () => void;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useUser } from '../../../contexts/UserContext';
 import { UnassignedReservations } from './AdminDashboard/UnassignedReservations';
 import { MyAssignedReservations } from './AdminDashboard/MyAssignedReservations';
-import { NotificationBell } from './NotificationBell';
+import { NotificationBell } from './Notifications/NotificationBell';
 import { reservationsApi } from '../../../api/reservations';
 
 type ViewType = 'dashboard' | 'unassigned' | 'my-reservations';

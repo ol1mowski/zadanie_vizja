@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useUser } from '../../../contexts/UserContext';
+import { useUser } from '../../../../contexts/UserContext';
 import { Link } from 'react-router-dom';
 
 interface CandidateSuccessScreenProps {

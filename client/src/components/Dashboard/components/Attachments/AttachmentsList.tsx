@@ -1,5 +1,5 @@
 import React from 'react';
-import { reservationsApi, type AttachmentResponse } from '../../../api/reservations';
+import { reservationsApi, type AttachmentResponse } from '../../../../api/reservations';
 
 interface AttachmentsListProps {
   attachments: AttachmentResponse[];

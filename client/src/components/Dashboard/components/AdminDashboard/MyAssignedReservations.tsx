@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { reservationsApi, type ReservationResponse } from '../../../../api/reservations';
-import { AttachmentsList } from '../AttachmentsList';
+import { AttachmentsList } from '../Attachments/AttachmentsList';
 
 interface MyAssignedReservationsProps {
   onBack: () => void;

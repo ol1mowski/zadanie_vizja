@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useUser } from '../../../contexts/UserContext';
 import { CandidateReservationForm } from './CandidateDashboard/CandidateReservationForm';
-import { CandidateSuccessScreen } from './CandidateSuccessScreen.component';
+import { CandidateSuccessScreen } from './Shared/CandidateSuccessScreen.component';
 
 export const CandidateDashboard: React.FC = () => {
   const { logout } = useUser();

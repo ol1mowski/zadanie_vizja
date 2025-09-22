@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { type NotificationResponse } from '../../../api/notifications';
+import { type NotificationResponse } from '../../../../api/notifications';
 
 interface NotificationModalProps {
   isOpen: boolean;
@@ -57,7 +57,6 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
      const userMatch = message.match(/została anulowana przez ([^.]+)/);
      const descMatch = message.match(/Opis: (.+)$/);
 
-     // Determine if it's student or candidate based on the user info
      const userInfo = userMatch ? userMatch[1] : 'Nieznany użytkownik';
      const isCandidate = userInfo.includes('kandydata');
      const isStudent = userInfo.includes('studenta');

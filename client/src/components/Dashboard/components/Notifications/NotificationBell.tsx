@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { notificationsApi, type NotificationResponse } from '../../../api/notifications';
+import { notificationsApi, type NotificationResponse } from '../../../../api/notifications';
 import { NotificationModal } from './NotificationModal';
 
 export const NotificationBell: React.FC = () => {
@@ -45,10 +45,8 @@ export const NotificationBell: React.FC = () => {
   };
 
   const handleBellClick = async () => {
-    // Reset count when opening notifications
     setRecentCount(0);
     
-    // Load fresh notifications and open modal
     await loadNotifications();
     setIsOpen(true);
   };
