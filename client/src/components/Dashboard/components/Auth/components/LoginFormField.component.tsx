@@ -3,7 +3,7 @@ import React from 'react';
 interface LoginFormFieldProps {
   label: string;
   name: 'email' | 'password' | 'albumNumber';
-  type: 'text' | 'password' | 'number';
+  type: 'text' | 'password' | 'email';
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;
@@ -37,7 +37,7 @@ export const LoginFormField: React.FC<LoginFormFieldProps> = ({
         }`}
       />
       {error && (
-        <p className="text-red-500 text-sm mt-1">{error}</p>
+        <p className="text-red-500 text-left text-sm mt-1">{error}</p>
       )}
     </div>
   );

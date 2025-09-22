@@ -3,10 +3,11 @@ import { useUser } from '../../../../contexts/UserContext';
 import { UnassignedReservations } from './components/UnassignedReservations.component';
 import { MyAssignedReservations } from './components/MyAssignedReservations.component';
 import { AdminHeader, AdminStatsCards } from './components';
+import { AdminProfile } from './components/AdminProfile.component';
 
 export const AdminDashboard: React.FC = () => {
   const { logout } = useUser();
-  const [currentView, setCurrentView] = React.useState<'dashboard' | 'unassigned' | 'my-reservations'>('dashboard');
+  const [currentView, setCurrentView] = React.useState<'dashboard' | 'unassigned' | 'my-reservations' | 'profile'>('dashboard');
 
   if (currentView === 'unassigned') {
     return (
@@ -20,11 +21,30 @@ export const AdminDashboard: React.FC = () => {
     );
   }
 
+  if (currentView === 'profile') {
+    return (
+      <div>
+        <div className="mb-6">
+          <button
+            onClick={() => setCurrentView('dashboard')}
+            className="flex items-center text-gray-600 hover:text-gray-900 transition duration-200"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Powrót do panelu
+          </button>
+        </div>
+        <AdminProfile />
+      </div>
+    );
+  }
+
   return (
     <div>
       <AdminHeader onLogout={logout} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200 hover:shadow-lg transition duration-200 cursor-pointer">
           <div className="flex items-center mb-4">
             <div className="bg-blue-500 p-3 rounded-lg">
@@ -66,6 +86,28 @@ export const AdminDashboard: React.FC = () => {
             className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
           >
             Zarządzaj Wizytami
+          </button>
+        </div>
+
+        <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200 hover:shadow-lg transition duration-200 cursor-pointer">
+          <div className="flex items-center mb-4">
+            <div className="bg-purple-500 p-3 rounded-lg">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-purple-900 ml-3">
+              Mój Profil
+            </h3>
+          </div>
+          <p className="text-purple-700 text-sm mb-4">
+            Podgląd danych konta pracownika
+          </p>
+          <button 
+            onClick={() => setCurrentView('profile')}
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+          >
+            Zobacz Profil
           </button>
         </div>
 

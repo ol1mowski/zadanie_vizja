@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.zadanieVizja.dto.AdminProfileResponse;
 import com.example.zadanieVizja.dto.StudentProfileResponse;
 import com.example.zadanieVizja.entity.User;
 import com.example.zadanieVizja.repository.UserRepository;
@@ -162,6 +163,26 @@ public class AuthController {
                 user.getRole()
         );
         
+        return ResponseEntity.ok(profile);
+    }
+
+    @GetMapping("/admin/profile")
+    public ResponseEntity<AdminProfileResponse> getAdminProfile() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return ResponseEntity.status(401).build();
+        }
+
+        String username = auth.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Użytkownik nie znaleziony"));
+
+        AdminProfileResponse profile = new AdminProfileResponse(
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole()
+        );
+
         return ResponseEntity.ok(profile);
     }
 }

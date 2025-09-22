@@ -40,16 +40,21 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const login = async ({ username, password, userType }: LoginPayload) => {
+    console.log('Logowanie:', { username, password, userType });
     const res = await fetch(`${API_BASE}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({ username, password, userType })
     });
+    console.log('Odpowiedź serwera:', res.status, res.statusText);
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
+      console.error('Błąd logowania:', errorData);
       throw new Error(errorData.error || 'Błędne dane logowania');
     }
+    const loginData = await res.json();
+    console.log('Dane logowania:', loginData);
     await fetchUserRole();
   };
 

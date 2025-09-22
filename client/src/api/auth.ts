@@ -23,6 +23,12 @@ export interface StudentProfileData {
   role: string;
 }
 
+export interface AdminProfileData {
+  username: string;
+  email: string | null;
+  role: string;
+}
+
 export const authApi = {
   login: async (data: LoginRequest): Promise<LoginResponse> => {
     const response = await fetch(`${API_BASE}/api/auth/login`, {
@@ -70,6 +76,18 @@ export const authApi = {
     
     if (!response.ok) {
       throw new Error('Failed to get student profile');
+    }
+    
+    return response.json();
+  },
+
+  getAdminProfile: async (): Promise<AdminProfileData> => {
+    const response = await fetch(`${API_BASE}/api/auth/admin/profile`, {
+      credentials: 'include'
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to get admin profile');
     }
     
     return response.json();

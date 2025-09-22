@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useUser } from '../../../../contexts/UserContext';
-import { LoginForm } from '../Auth/LoginForm.component';
-import type { LoginFormData } from '../Auth/types/LoginForm.types';
+import { StudentLoginForm } from '../Auth/components/StudentLoginForm.component';
+import { AdminLoginForm } from '../Auth/components/AdminLoginForm.component';
+import type { StudentLoginData } from '../Auth/hooks/useStudentLogin.hook';
+import type { AdminLoginData } from '../Auth/hooks/useAdminLogin.hook';
 import { useNavigate } from 'react-router-dom'; 
 
 export const WelcomeComponent: React.FC = () => {
@@ -18,16 +20,31 @@ export const WelcomeComponent: React.FC = () => {
     setIsLoginOpen(true);
   };
 
-  const handleLoginSubmit = async (data: LoginFormData) => {
+  const handleStudentLoginSubmit = async (data: StudentLoginData) => {
     const loginData = {
-      username: data.userType === 'student' ? data.albumNumber! : data.email!,
+      username: data.albumNumber,
       password: data.password,
       userType: data.userType
     };
     
     await login(loginData);
+    await redirectAfterLogin();
+  };
+
+  const handleAdminLoginSubmit = async (data: AdminLoginData) => {
+    const loginData = {
+      username: data.email,
+      password: data.password,
+      userType: data.userType
+    };
+    
+    await login(loginData);
+    await redirectAfterLogin();
+  };
+
+  const redirectAfterLogin = async () => {
     try {
-      const res = await fetch((import.meta as any).env.VITE_API_BASE_URL ?? 'http://localhost:8080' + '/api/auth/me', {
+      const res = await fetch(((import.meta as any).env.VITE_API_BASE_URL ?? 'http://localhost:8080') + '/api/auth/me', {
         credentials: 'include'
       } as RequestInit);
       if (res.ok) {
@@ -122,12 +139,19 @@ export const WelcomeComponent: React.FC = () => {
         </div>
       </div>
 
-      <LoginForm
-        isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
-        onSubmit={handleLoginSubmit}
-        userType={loginUserType}
-      />
+      {isLoginOpen && loginUserType === 'student' && (
+        <StudentLoginForm 
+          onSubmit={handleStudentLoginSubmit}
+          onClose={() => setIsLoginOpen(false)}
+        />
+      )}
+
+      {isLoginOpen && loginUserType === 'admin' && (
+        <AdminLoginForm 
+          onSubmit={handleAdminLoginSubmit}
+          onClose={() => setIsLoginOpen(false)}
+        />
+      )}
     </div>
   );
 };
