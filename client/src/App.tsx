@@ -9,7 +9,7 @@ import { ToastContainer } from './components/Toast/ToastContainer';
 
 const App: React.FC = () => {
   return (
-      <UserProvider>
+      <UserProvider>  
         <BrowserRouter>
           <ErrorBoundary>
             <ToastProvider>
