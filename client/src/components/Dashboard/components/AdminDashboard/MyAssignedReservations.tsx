@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { reservationsApi, type ReservationResponse } from '../../../../api/reservations';
+import { AttachmentsList } from '../AttachmentsList';
 
 interface MyAssignedReservationsProps {
   onBack: () => void;
@@ -75,7 +76,6 @@ export const MyAssignedReservations: React.FC<MyAssignedReservationsProps> = ({ 
   };
 
   const getReservationTypeIcon = (reservation: ReservationResponse) => {
-    // Student reservation has assignedEmployeeUsername field available but null
     const isStudent = reservation.assignedEmployeeUsername !== undefined;
     
     if (isStudent) {
@@ -197,12 +197,22 @@ export const MyAssignedReservations: React.FC<MyAssignedReservationsProps> = ({ 
                       </div>
                     </div>
 
-                    {reservation.description && (
-                      <p className="mt-2 text-sm text-gray-700 ml-11">{reservation.description}</p>
-                    )}
-                  </div>
-                </div>
-              </div>
+                     {reservation.description && (
+                       <p className="mt-2 text-sm text-gray-700 ml-11">{reservation.description}</p>
+                     )}
+
+                     {reservation.attachments && reservation.attachments.length > 0 && (
+                       <div className="mt-3 ml-11">
+                         <p className="text-sm font-medium text-gray-700 mb-2">Załączniki:</p>
+                         <AttachmentsList 
+                           attachments={reservation.attachments}
+                           canDelete={false}
+                         />
+                       </div>
+                     )}
+                   </div>
+                 </div>
+               </div>
             );
           })}
 

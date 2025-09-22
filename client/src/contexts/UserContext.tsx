@@ -54,7 +54,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
     if (!res.ok) throw new Error('Błędne dane logowania');
     console.log('Login successful, fetching user role...');
-    // Po udanym logowaniu odczytaj rolę z serwera
     await fetchUserRole();
   };
 

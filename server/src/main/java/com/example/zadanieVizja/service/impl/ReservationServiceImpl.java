@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.zadanieVizja.dto.AttachmentResponse;
 import com.example.zadanieVizja.dto.ReservationRequest;
 import com.example.zadanieVizja.dto.ReservationResponse;
 import com.example.zadanieVizja.entity.CandidateData;
@@ -64,6 +65,7 @@ public class ReservationServiceImpl implements ReservationService {
                 .lastName(request.candidateLastName())
                 .pesel(request.candidatePesel())
                 .email(request.candidateEmail())
+                .phone(request.candidatePhone())
                 .build();
 
         Reservation reservation = Reservation.builder()
@@ -144,14 +146,48 @@ public class ReservationServiceImpl implements ReservationService {
         if (!isStudentOwner && !isCandidate) {
             throw new IllegalStateException("Only owner can cancel reservation");
         }
+        
+        // Send notification to assigned employee if exists
+        if (reservation.getAssignedEmployee() != null) {
+            sendCancellationNotification(reservation);
+        }
+        
         reservation.setStatus(ReservationStatus.CANCELLED);
         reservationRepository.save(reservation);
+    }
+
+    private void sendCancellationNotification(Reservation reservation) {
+        // In a real application, this would send email/SMS/push notification
+        // For now, we'll just log it
+        String assignedEmployeeEmail = reservation.getAssignedEmployee().getEmail();
+        String studentInfo = reservation.getStudent() != null 
+            ? reservation.getStudent().getEmail() 
+            : "Kandydat";
+        
+        System.out.println("=== POWIADOMIENIE O ANULOWANIU WIZYTY ===");
+        System.out.println("Do: " + assignedEmployeeEmail);
+        System.out.println("Temat: Anulowanie wizyty - " + reservation.getTopic());
+        System.out.println("Treść: Wizyta zaplanowana na " + reservation.getDate() + " o " + reservation.getTime() + 
+                          " została anulowana przez " + studentInfo);
+        System.out.println("Szczegóły: " + reservation.getDescription());
+        System.out.println("=========================================");
     }
 
     private ReservationResponse toResponse(Reservation reservation) {
         String assigned = reservation.getAssignedEmployee() != null
                 ? reservation.getAssignedEmployee().getUsername()
                 : null;
+        
+        List<AttachmentResponse> attachments = reservation.getAttachments().stream()
+                .map(att -> new AttachmentResponse(
+                        att.getId(),
+                        att.getOriginalFileName(),
+                        att.getContentType(),
+                        att.getFileSize(),
+                        "/api/attachments/" + att.getId() + "/download"
+                ))
+                .collect(Collectors.toList());
+        
         return new ReservationResponse(
                 reservation.getId(),
                 reservation.getDate(),
@@ -159,7 +195,8 @@ public class ReservationServiceImpl implements ReservationService {
                 reservation.getTopic(),
                 reservation.getDescription(),
                 reservation.getStatus(),
-                assigned
+                assigned,
+                attachments
         );
     }
 }

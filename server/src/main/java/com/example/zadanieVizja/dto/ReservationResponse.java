@@ -2,6 +2,7 @@ package com.example.zadanieVizja.dto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 import com.example.zadanieVizja.entity.ReservationStatus;
 
@@ -12,7 +13,8 @@ public record ReservationResponse(
         String topic,
         String description,
         ReservationStatus status,
-        String assignedEmployeeUsername
+        String assignedEmployeeUsername,
+        List<AttachmentResponse> attachments
 ) {}
 
 

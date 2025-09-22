@@ -18,7 +18,8 @@ public record ReservationRequest(
         @Size(max = 100) String candidateFirstName,
         @Size(max = 100) String candidateLastName,
         @Pattern(regexp = "^[0-9]{11}$") String candidatePesel,
-        @Email String candidateEmail
+        @Email String candidateEmail,
+        @Pattern(regexp = "^[+]?[0-9\\s\\-()]{9,15}$") String candidatePhone
 ) {}
 
 

@@ -1,26 +1,43 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { reservationsApi, type CreateReservationRequest } from '../../../../api/reservations';
+import { reservationsApi } from '../../../../api/reservations';
 
-interface CreateReservationFormProps {
+interface CandidateReservationFormProps {
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-export const CreateReservationForm: React.FC<CreateReservationFormProps> = ({
+interface CandidateFormData {
+  firstName: string;
+  lastName: string;
+  pesel: string;
+  email: string;
+  phone: string;
+  date: string;
+  time: string;
+  topic: string;
+  description: string;
+}
+
+export const CandidateReservationForm: React.FC<CandidateReservationFormProps> = ({
   onSuccess,
   onCancel
 }) => {
-  const [formData, setFormData] = useState<CreateReservationRequest>({
+  const [formData, setFormData] = useState<CandidateFormData>({
+    firstName: '',
+    lastName: '',
+    pesel: '',
+    email: '',
+    phone: '',
     date: '',
     time: '',
     topic: '',
     description: ''
   });
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [uploadingFiles, setUploadingFiles] = useState<boolean>(false);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
   const [dragOver, setDragOver] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,8 +46,22 @@ export const CreateReservationForm: React.FC<CreateReservationFormProps> = ({
     setError(null);
 
     try {
-      const reservation = await reservationsApi.createStudentReservation(formData);
+      // Create reservation
+      const reservationRequest = {
+        date: formData.date,
+        time: formData.time,
+        topic: formData.topic,
+        description: formData.description,
+        candidateFirstName: formData.firstName,
+        candidateLastName: formData.lastName,
+        candidatePesel: formData.pesel,
+        candidateEmail: formData.email,
+        candidatePhone: formData.phone
+      };
+
+      const reservation = await reservationsApi.createCandidateReservation(reservationRequest);
       
+      // Upload attachments if any
       if (selectedFiles.length > 0) {
         setUploadingFiles(true);
         for (const file of selectedFiles) {
@@ -59,13 +90,11 @@ export const CreateReservationForm: React.FC<CreateReservationFormProps> = ({
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       
-      // Check file size (10MB max)
       if (file.size > 10 * 1024 * 1024) {
         alert(`Plik "${file.name}" jest za duży. Maksymalny rozmiar to 10MB.`);
         continue;
       }
       
-      // Check if file already selected
       if (selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
         continue;
       }
@@ -108,23 +137,22 @@ export const CreateReservationForm: React.FC<CreateReservationFormProps> = ({
   const timeOptions = [];
   for (let hour = 9; hour <= 17; hour++) {
     for (let minute = 0; minute < 60; minute += 30) {
-      if (hour === 17 && minute > 0) break; // Stop at 17:00
+      if (hour === 17 && minute > 0) break;
       const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
       timeOptions.push(timeString);
     }
   }
 
-  // Get minimum date (today)
   const today = new Date().toISOString().split('T')[0];
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-lg shadow-lg p-6"
+      className="bg-white rounded-lg shadow-lg p-6 max-w-2xl mx-auto"
     >
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Nowa Rezerwacja</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Rezerwacja Wizyty - Kandydat</h2>
         <p className="text-gray-600">Wypełnij formularz, aby zarezerwować wizytę</p>
       </div>
 
@@ -135,6 +163,83 @@ export const CreateReservationForm: React.FC<CreateReservationFormProps> = ({
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Personal Information */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Imię *
+            </label>
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Nazwisko *
+            </label>
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              PESEL *
+            </label>
+            <input
+              type="text"
+              name="pesel"
+              value={formData.pesel}
+              onChange={handleChange}
+              pattern="[0-9]{11}"
+              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Telefon *
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Email *
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+
+        {/* Visit Details */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -179,7 +284,6 @@ export const CreateReservationForm: React.FC<CreateReservationFormProps> = ({
             name="topic"
             value={formData.topic}
             onChange={handleChange}
-            placeholder="Np. Konsultacje dotyczące pracy dyplomowej"
             required
             maxLength={500}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -188,25 +292,25 @@ export const CreateReservationForm: React.FC<CreateReservationFormProps> = ({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Opis wizyty (opcjonalnie)
+            Opis wizyty *
           </label>
           <textarea
             name="description"
             value={formData.description}
             onChange={handleChange}
-            placeholder="Dodatkowe informacje dotyczące wizyty..."
+            required
             rows={4}
             maxLength={2000}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
           />
         </div>
 
+        {/* Attachments */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Załączniki (opcjonalnie)
           </label>
           
-          {/* File selection area */}
           <div 
             className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
               dragOver 
@@ -238,7 +342,6 @@ export const CreateReservationForm: React.FC<CreateReservationFormProps> = ({
             </p>
           </div>
 
-          {/* Selected files list */}
           {selectedFiles.length > 0 && (
             <div className="mt-4 space-y-2">
               <p className="text-sm font-medium text-gray-700">Wybrane pliki:</p>

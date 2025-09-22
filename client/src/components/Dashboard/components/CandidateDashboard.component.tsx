@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useUser } from '../../../contexts/UserContext';
-import { CandidateFormPopup } from './CandidateFormPopup';
-import type { CandidateFormData } from './CandidateFormPopup';
+import { CandidateReservationForm } from './CandidateDashboard/CandidateReservationForm';
 import { CandidateSuccessScreen } from './CandidateSuccessScreen.component';
 
 export const CandidateDashboard: React.FC = () => {
@@ -10,22 +9,22 @@ export const CandidateDashboard: React.FC = () => {
   const [showSuccessScreen, setShowSuccessScreen] = useState(false);
   const [reservationData, setReservationData] = useState<any>(null);
 
-  const handleFormSubmit = (data: CandidateFormData) => {
-    console.log('Formularz kandydata:', data);
-
-    setReservationData({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      subject: data.subject,
-      preferredDate: data.preferredDate,
-      preferredTime: data.preferredTime
-    });
+  const handleFormSubmit = () => {
     setShowSuccessScreen(true);
+    setIsFormOpen(false);
   };
 
-  if (showSuccessScreen && reservationData) {
-    return <CandidateSuccessScreen reservationData={reservationData} />;
+  if (showSuccessScreen) {
+    return <CandidateSuccessScreen reservationData={{}} />;
+  }
+
+  if (isFormOpen) {
+    return (
+      <CandidateReservationForm
+        onSuccess={handleFormSubmit}
+        onCancel={() => setIsFormOpen(false)}
+      />
+    );
   }
 
   return (
@@ -136,11 +135,6 @@ export const CandidateDashboard: React.FC = () => {
         </div>
       </div>
 
-      <CandidateFormPopup
-        isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
-        onSubmit={handleFormSubmit}
-      />
     </div>
   );
 };
