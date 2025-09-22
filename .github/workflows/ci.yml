@@ -66,7 +66,7 @@ jobs:
           CI: true
         run: |
           if [ -f yarn.lock ]; then
-            yarn test --watchAll=false
+            yarn test --run
           else
-            npm test -- --watchAll=false
+            npm test -- --run
           fi
