@@ -20,7 +20,7 @@ Konsola H2: http://localhost:8080/h2-console (JDBC URL: `jdbc:h2:file:./data/zad
 - H2 (plikowa)
 
 ## Struktura pakietów
-- `domain` – encje JPA i enumy
+- `entity` – encje JPA i enumy
 - `dto` – rekordy wymiany danych
 - `repository` – repozytoria JPA
 - `service` – interfejsy serwisów
