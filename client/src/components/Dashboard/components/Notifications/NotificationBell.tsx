@@ -1,66 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { notificationsApi, type NotificationResponse } from '../../../../api/notifications';
+import React from 'react';
+import { useNotifications } from './hooks/useNotifications.hook';
 import { NotificationModal } from './NotificationModal';
 
 export const NotificationBell: React.FC = () => {
-  const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
-  const [recentCount, setRecentCount] = useState<number>(0);
-  const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    loadRecentCount();
-    const interval = setInterval(loadRecentCount, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const loadRecentCount = async () => {
-    try {
-      const allNotifications = await notificationsApi.getAllNotifications();
-      const yesterday = new Date();
-      yesterday.setHours(yesterday.getHours() - 24);
-      
-      const recentNotifications = allNotifications.filter(notification => 
-        new Date(notification.createdAt) >= yesterday
-      );
-      
-      setRecentCount(recentNotifications.length);
-    } catch (error) {
-      console.error('Failed to load recent notifications count:', error);
-    }
-  };
-
-  const loadNotifications = async () => {
-    if (loading) return;
-    
-    setLoading(true);
-    try {
-      const data = await notificationsApi.getAllNotifications();
-      setNotifications(data);
-    } catch (error) {
-      console.error('Failed to load notifications:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleBellClick = async () => {
-    setRecentCount(0);
-    
-    await loadNotifications();
-    setIsOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setIsOpen(false);
-  };
-
-
+  const { notifications, recentCount, isOpen, openModal, closeModal } = useNotifications();
 
   return (
     <div className="relative">
       <button
-        onClick={handleBellClick}
+        onClick={openModal}
         className="relative p-2 text-gray-600 hover:text-gray-800 transition-colors"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,7 +23,7 @@ export const NotificationBell: React.FC = () => {
 
       <NotificationModal
         isOpen={isOpen}
-        onClose={handleModalClose}
+        onClose={closeModal}
         notifications={notifications}
       />
     </div>
