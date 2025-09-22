@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { CandidateFormData } from './CandidateFormPopup.types';
+import type { CandidateFormData } from '../types/CandidateFormPopup.types';
 
 export const useCandidateForm = () => {
   const [formData, setFormData] = useState<CandidateFormData>({

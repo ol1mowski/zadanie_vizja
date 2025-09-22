@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useCandidateForm } from './CandidateFormPopup.hook';
-import type { CandidateFormPopupProps } from './CandidateFormPopup.types';
+import { useCandidateForm } from './hooks/CandidateFormPopup.hook';
+import type { CandidateFormPopupProps } from './types/CandidateFormPopup.types';
 import {
   FormHeader,
   FormButtons,
@@ -9,7 +9,7 @@ import {
   ContactInfoSection,
   VisitDetailsSection,
   PreferredTimeSection
-} from './CandidateFormPopup.components';
+} from './components';
 
 export const CandidateFormPopup: React.FC<CandidateFormPopupProps> = ({
   isOpen,
