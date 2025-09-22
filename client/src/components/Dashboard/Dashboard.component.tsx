@@ -1,7 +1,6 @@
-import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { WelcomeComponent } from './components/Shared/WelcomeComponent.component';
-import { StudentDashboard } from './components/StudentDashboard.component';
+import { StudentDashboard } from './components/StudentDashboard/StudentDashboard.component';
 import { AdminDashboard } from './components/AdminDashboard.component';
 import { CandidateDashboard } from './components/CandidateDashboard.component';
 import { ProtectedRoute } from '../ProtectedRoute';
