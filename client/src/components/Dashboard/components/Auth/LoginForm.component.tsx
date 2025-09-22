@@ -65,7 +65,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                   value={formData.email}
                   onChange={handleInputChange}
                   error={errors.email}
-                  placeholder="student1 / admin1 lub e-mail"
+                  placeholder="Wprowadź e-mail"
                   required
                 />
                 

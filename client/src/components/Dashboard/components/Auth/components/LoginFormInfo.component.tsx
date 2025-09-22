@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface LoginFormInfoProps {
   userType: 'student' | 'admin';
@@ -8,10 +8,13 @@ export const LoginFormInfo: React.FC<LoginFormInfoProps> = ({ userType }) => {
   const isStudent = userType === 'student';
   const login = isStudent ? 'student1@example.edu' : 'admin1@example.edu';
   const password = 'Qwerty123!@#';
+  const [copiedItem, setCopiedItem] = useState<string | null>(null);
 
-  const handleCopy = async (text: string) => {
+  const handleCopy = async (text: string, item: 'login' | 'password') => {
     try {
       await navigator.clipboard.writeText(text);
+      setCopiedItem(item);
+      setTimeout(() => setCopiedItem(null), 2000);
     } catch {
       // no-op
     }
@@ -47,11 +50,15 @@ export const LoginFormInfo: React.FC<LoginFormInfoProps> = ({ userType }) => {
               </span>
               <button
                 type="button"
-                onClick={() => handleCopy(login)}
-                className="px-2 py-1 text-xs rounded-md border text-gray-600 hover:text-gray-800 hover:border-gray-400 transition-colors"
+                onClick={() => handleCopy(login, 'login')}
+                className={`px-2 py-1 text-xs rounded-md border transition-colors ${
+                  copiedItem === 'login' 
+                    ? 'bg-green-100 text-green-800 border-green-300' 
+                    : 'text-gray-600 hover:text-gray-800 hover:border-gray-400'
+                }`}
                 aria-label="Kopiuj login"
               >
-                Kopiuj
+                {copiedItem === 'login' ? 'Skopiowano!' : 'Kopiuj'}
               </button>
             </div>
             <div className="flex items-center flex-wrap gap-2 mt-2">
@@ -63,11 +70,15 @@ export const LoginFormInfo: React.FC<LoginFormInfoProps> = ({ userType }) => {
               </span>
               <button
                 type="button"
-                onClick={() => handleCopy(password)}
-                className="px-2 py-1 text-xs rounded-md border text-gray-600 hover:text-gray-800 hover:border-gray-400 transition-colors"
+                onClick={() => handleCopy(password, 'password')}
+                className={`px-2 py-1 text-xs rounded-md border transition-colors ${
+                  copiedItem === 'password' 
+                    ? 'bg-green-100 text-green-800 border-green-300' 
+                    : 'text-gray-600 hover:text-gray-800 hover:border-gray-400'
+                }`}
                 aria-label="Kopiuj hasło"
               >
-                Kopiuj
+                {copiedItem === 'password' ? 'Skopiowano!' : 'Kopiuj'}
               </button>
             </div>
           </div>

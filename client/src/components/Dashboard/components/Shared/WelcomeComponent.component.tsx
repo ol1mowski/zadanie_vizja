@@ -16,8 +16,22 @@ export const WelcomeComponent: React.FC = () => {
 
   const handleLoginSubmit = async (data: LoginFormData) => {
     await login({ email: data.email, password: data.password, userType: data.userType });
-    if (data.userType === 'student') window.location.assign('/student');
-    else window.location.assign('/admin');
+    try {
+      const res = await fetch((import.meta as any).env.VITE_API_BASE_URL ?? 'http://localhost:8080' + '/api/auth/me', {
+        credentials: 'include'
+      } as RequestInit);
+      if (res.ok) {
+        const me = await res.json();
+        const role = me.role;
+        if (role === 'ADMIN') window.location.assign('/admin');
+        else if (role === 'STUDENT') window.location.assign('/student');
+        else window.location.assign('/');
+      } else {
+        window.location.assign('/');
+      }
+    } catch {
+      window.location.assign('/');
+    }
   };
 
   return (
