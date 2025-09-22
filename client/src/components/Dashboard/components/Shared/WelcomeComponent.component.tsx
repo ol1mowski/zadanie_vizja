@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import { useUser } from '../../../../contexts/UserContext';
 import { LoginForm } from '../Auth/LoginForm.component';
 import type { LoginFormData } from '../Auth/types/LoginForm.types';
+import { useNavigate } from 'react-router-dom'; 
 
 export const WelcomeComponent: React.FC = () => {
   const { login } = useUser();
-  const switchToCandidate = () => window.location.assign('/candidate');
+  const navigate = useNavigate();
+
+  const switchToCandidate = () => navigate('/candidate');
+  
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [loginUserType, setLoginUserType] = useState<'student' | 'admin'>('student');
 
@@ -15,7 +19,13 @@ export const WelcomeComponent: React.FC = () => {
   };
 
   const handleLoginSubmit = async (data: LoginFormData) => {
-    await login({ email: data.email, password: data.password, userType: data.userType });
+    const loginData = {
+      username: data.userType === 'student' ? data.albumNumber! : data.email!,
+      password: data.password,
+      userType: data.userType
+    };
+    
+    await login(loginData);
     try {
       const res = await fetch((import.meta as any).env.VITE_API_BASE_URL ?? 'http://localhost:8080' + '/api/auth/me', {
         credentials: 'include'

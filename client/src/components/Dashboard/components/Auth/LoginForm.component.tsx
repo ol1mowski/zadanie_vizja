@@ -58,16 +58,29 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               <LoginFormInfo userType={userType} />
               
               <form onSubmit={handleFormSubmit} className="space-y-6">
-                <LoginFormField
-                  label="Login (email lub nazwa użytkownika)"
-                  name="email"
-                  type="text"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  error={errors.email}
-                  placeholder="Wprowadź e-mail"
-                  required
-                />
+                {userType === 'student' ? (
+                  <LoginFormField
+                    label="Numer albumu"
+                    name="albumNumber"
+                    type="text"
+                    value={formData.albumNumber || ''}
+                    onChange={handleInputChange}
+                    error={errors.albumNumber}
+                    placeholder="np. 123456"
+                    required
+                  />
+                ) : (
+                  <LoginFormField
+                    label="E-mail pracowniczy"
+                    name="email"
+                    type="text"
+                    value={formData.email || ''}
+                    onChange={handleInputChange}
+                    error={errors.email}
+                    placeholder="np. j.kowalski@uczelnia.pl"
+                    required
+                  />
+                )}
                 
                 <LoginFormField
                   label="Hasło"

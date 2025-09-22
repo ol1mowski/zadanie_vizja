@@ -2,7 +2,7 @@ import { createContext, useContext, useMemo, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { UserType } from '../types/user';
 
-type LoginPayload = { email: string; password: string; userType: 'student' | 'admin' };
+type LoginPayload = { username: string; password: string; userType: 'student' | 'admin' };
 
 interface AuthState {
   role: UserType | null;
@@ -39,14 +39,17 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const login = async ({ email, password }: LoginPayload) => {
+  const login = async ({ username, password, userType }: LoginPayload) => {
     const res = await fetch(`${API_BASE}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ username: email, password })
+      body: JSON.stringify({ username, password, userType })
     });
-    if (!res.ok) throw new Error('Błędne dane logowania');
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Błędne dane logowania');
+    }
     await fetchUserRole();
   };
 

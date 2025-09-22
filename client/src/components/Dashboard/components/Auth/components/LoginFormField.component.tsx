@@ -2,8 +2,8 @@ import React from 'react';
 
 interface LoginFormFieldProps {
   label: string;
-  name: 'email' | 'password';
-  type: 'text' | 'password';
+  name: 'email' | 'password' | 'albumNumber';
+  type: 'text' | 'password' | 'number';
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;

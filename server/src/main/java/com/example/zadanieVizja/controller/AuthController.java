@@ -25,7 +25,7 @@ import com.example.zadanieVizja.security.JwtService;
 
 import jakarta.validation.constraints.NotBlank;
 
-record LoginRequest(@NotBlank String username, @NotBlank String password) {}
+record LoginRequest(@NotBlank String username, @NotBlank String password, String userType) {}
 
 @RestController
 @RequestMapping("/api/auth")
@@ -55,15 +55,42 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest req) {
         try {
+            // Walidacja typu użytkownika i formatu danych
+            if (req.userType() == null) {
+                return ResponseEntity.status(400).body(Map.of("error", "Typ użytkownika jest wymagany"));
+            }
+
+            String loginIdentifier;
+            if ("student".equals(req.userType())) {
+                // Dla studenta: numer albumu (6-8 cyfr)
+                if (!req.username().matches("\\d{6,8}")) {
+                    System.out.println("Błąd walidacji: numer albumu '" + req.username() + "' nie pasuje do wzorca");
+                    return ResponseEntity.status(400).body(Map.of("error", "Numer albumu musi mieć 6-8 cyfr"));
+                }
+                loginIdentifier = "student_" + req.username();
+                System.out.println("Student login: '" + req.username() + "' -> szukam w bazie: '" + loginIdentifier + "'");
+            } else if ("admin".equals(req.userType())) {
+                // Dla admina: e-mail z domeną uczelnia.*
+                if (!req.username().matches("^[^@]+@uczelnia\\.[^@]+$")) {
+                    System.out.println("Błąd walidacji: email '" + req.username() + "' nie pasuje do wzorca uczelnia.*");
+                    return ResponseEntity.status(400).body(Map.of("error", "E-mail pracownika musi mieć domenę uczelnia.*"));
+                }
+                loginIdentifier = req.username();
+                System.out.println("Admin login: '" + req.username() + "' -> szukam w bazie: '" + loginIdentifier + "'");
+            } else {
+                return ResponseEntity.status(400).body(Map.of("error", "Nieprawidłowy typ użytkownika"));
+            }
+
             Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(req.username(), req.password())
+                    new UsernamePasswordAuthenticationToken(loginIdentifier, req.password())
             );
             SecurityContextHolder.getContext().setAuthentication(auth);
         } catch (BadCredentialsException ex) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(401).body(Map.of("error", "Nieprawidłowe dane logowania"));
         }
 
-        User user = userRepository.findByUsername(req.username()).orElseThrow();
+        String loginIdentifier = "student".equals(req.userType()) ? "student_" + req.username() : req.username();
+        User user = userRepository.findByUsername(loginIdentifier).orElseThrow();
         String token = jwtService.generateToken(user.getUsername(), Map.of("role", user.getRole().name()));
 
         ResponseCookie cookie = ResponseCookie.from(cookieName, token)

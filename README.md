@@ -61,9 +61,9 @@ docker compose up -d
 Zmienne środowiskowe można nadpisać w `docker-compose.yml` (np. `SERVER_PORT`, `SPRING_H2_CONSOLE_ENABLED`).
 
 ## Testowe dane logowania
-- **Student**: `student@test.com` / `password`
-- **Admin**: `admin@test.com` / `password`
-Informacja z przyciskami „kopiuj” dostępna w `LoginFormInfo`.
+- **Student**: `123456` (numer albumu) / `password`
+- **Admin**: `admin@uczelnia.pl` / `password`
+Informacja z przyciskami „kopiuj" dostępna w `LoginFormInfo`.
 
 ## CI/CD (GitHub Actions)
 Plik: `.github/workflows/ci.yml`

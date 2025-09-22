@@ -6,8 +6,8 @@ interface LoginFormInfoProps {
 
 export const LoginFormInfo: React.FC<LoginFormInfoProps> = ({ userType }) => {
   const isStudent = userType === 'student';
-  const login = isStudent ? 'student1@example.edu' : 'admin1@example.edu';
-  const password = 'Qwerty123!@#';
+  const login = isStudent ? '123456' : 'admin@uczelnia.pl';
+  const password = 'password';
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
 
   const handleCopy = async (text: string, item: 'login' | 'password') => {
@@ -23,8 +23,8 @@ export const LoginFormInfo: React.FC<LoginFormInfoProps> = ({ userType }) => {
   return (
     <div className="mb-4 p-3 bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-lg text-sm text-gray-700">
       {isStudent
-        ? 'Zaloguj się używając loginu lub e-maila oraz hasła.'
-        : 'Zaloguj się do panelu administratora.'}
+        ? 'Zaloguj się używając numeru albumu oraz hasła.'
+        : 'Zaloguj się używając e-maila pracowniczego oraz hasła.'}
 
       <div className="mt-3 bg-white text-left border rounded-md p-3 shadow-sm">
         <div className="flex items-center mb-3">

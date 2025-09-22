@@ -3,9 +3,9 @@ import type { LoginFormData, LoginFormErrors } from '../types/LoginForm.types';
 
 export const useLoginForm = (userType: 'student' | 'admin') => {
   const [formData, setFormData] = useState<LoginFormData>({
-    email: '',
     password: '',
-    userType
+    userType,
+    ...(userType === 'student' ? { albumNumber: '' } : { email: '' })
   });
 
   const [errors, setErrors] = useState<LoginFormErrors>({});
@@ -13,13 +13,24 @@ export const useLoginForm = (userType: 'student' | 'admin') => {
   const validateForm = useCallback((): boolean => {
     const newErrors: LoginFormErrors = {};
 
-    if (!formData.email.trim()) newErrors.email = 'Login jest wymagany';
     if (!formData.password.trim()) newErrors.password = 'Hasło jest wymagane';
     else if (formData.password.length < 6) newErrors.password = 'Hasło musi mieć co najmniej 6 znaków';
 
+    if (formData.userType === 'student') {
+      if (!formData.albumNumber?.trim()) newErrors.albumNumber = 'Numer albumu jest wymagany';
+      else if (!/^\d{6,8}$/.test(formData.albumNumber.trim())) {
+        newErrors.albumNumber = 'Numer albumu musi mieć 6-8 cyfr';
+      }
+    } else {
+      if (!formData.email?.trim()) newErrors.email = 'E-mail jest wymagany';
+      else if (!/^[^@]+@uczelnia\.[^@]+$/.test(formData.email.trim())) {
+        newErrors.email = 'E-mail pracownika musi mieć domenę uczelnia.*';
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [formData.email, formData.password]);
+  }, [formData.email, formData.albumNumber, formData.password, formData.userType]);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -49,7 +60,11 @@ export const useLoginForm = (userType: 'student' | 'admin') => {
   }, [formData, validateForm]);
 
   const resetForm = useCallback(() => {
-    setFormData({ email: '', password: '', userType });
+    setFormData({
+      password: '',
+      userType,
+      ...(userType === 'student' ? { albumNumber: '' } : { email: '' })
+    });
     setErrors({});
   }, [userType]);
 

@@ -1,5 +1,6 @@
 export interface LoginFormData {
-  email: string;
+  email?: string;
+  albumNumber?: string;
   password: string;
   userType: 'student' | 'admin';
 }

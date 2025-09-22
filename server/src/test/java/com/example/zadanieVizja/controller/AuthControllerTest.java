@@ -71,10 +71,10 @@ class AuthControllerTest {
                 .build();
         sampleToken = "sample.jwt.token";
         
-        LoginRequest loginRequest = new LoginRequest("testuser", "password");
+        LoginRequest loginRequest = new LoginRequest("admin@uczelnia.pl", "password", "admin");
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
-        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(sampleUser));
+        when(userRepository.findByUsername("admin@uczelnia.pl")).thenReturn(Optional.of(sampleUser));
         when(jwtService.generateToken(anyString(), any(Map.class))).thenReturn(sampleToken);
 
         // When
@@ -91,9 +91,37 @@ class AuthControllerTest {
     }
 
     @Test
+    void login_WithStudentAlbumNumber_ShouldReturnSuccessResponse() {
+        // Given
+        sampleUser = User.builder()
+                .username("student_123456")
+                .role(UserRole.STUDENT)
+                .build();
+        sampleToken = "sample.jwt.token";
+        
+        LoginRequest loginRequest = new LoginRequest("123456", "password", "student");
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(authentication);
+        when(userRepository.findByUsername("student_123456")).thenReturn(Optional.of(sampleUser));
+        when(jwtService.generateToken(anyString(), any(Map.class))).thenReturn(sampleToken);
+
+        // When
+        ResponseEntity<Map<String, String>> response = authController.login(loginRequest);
+
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).containsEntry("username", "student_123456");
+        assertThat(response.getBody()).containsEntry("role", "STUDENT");
+        assertThat(response.getHeaders().getFirst("Set-Cookie")).isNotNull();
+        verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verify(userRepository).findByUsername("student_123456");
+        verify(jwtService).generateToken("student_123456", Map.of("role", "STUDENT"));
+    }
+
+    @Test
     void login_WithInvalidCredentials_ShouldReturnUnauthorized() {
         // Given
-        LoginRequest loginRequest = new LoginRequest("testuser", "wrongpassword");
+        LoginRequest loginRequest = new LoginRequest("invalid@test.com", "wrongpassword", "admin");
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(new BadCredentialsException("Invalid credentials"));
 

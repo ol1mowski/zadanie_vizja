@@ -1,5 +1,5 @@
 import React from 'react';
-import { SecureTextArea } from '../../../../../../Form/SecureTextArea.component';
+import { SecureTextArea } from '../../../../../Form/SecureTextArea.component';
 
 type Props = {
   topic: string;
