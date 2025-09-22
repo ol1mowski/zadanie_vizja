@@ -36,6 +36,7 @@ export const CandidateReservationForm: React.FC<CandidateReservationFormProps> =
     dragOver,
     timeOptions,
     today,
+    fieldErrors,
     handleSubmit,
     handleChange,
     handleFileSelect,
@@ -70,9 +71,10 @@ export const CandidateReservationForm: React.FC<CandidateReservationFormProps> =
           pesel={formData.pesel}
           phone={formData.phone}
           onChange={handleChange}
+          fieldErrors={fieldErrors}
         />
 
-        <ContactFields email={formData.email} onChange={handleChange as any} />
+        <ContactFields email={formData.email} onChange={handleChange as any} fieldErrors={fieldErrors} />
 
         <VisitFields
           date={formData.date}
@@ -82,6 +84,7 @@ export const CandidateReservationForm: React.FC<CandidateReservationFormProps> =
           timeOptions={timeOptions}
           minDate={today}
           onChange={handleChange as any}
+          fieldErrors={fieldErrors}
         />
 
         <AttachmentsDropzone

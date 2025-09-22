@@ -10,6 +10,7 @@ type SecureTextAreaProps = {
   maxLength?: number;
   disabled?: boolean;
   className?: string;
+  error?: string;
   onValueChange: (name: string, value: string) => void;
 };
 
@@ -28,6 +29,7 @@ export const SecureTextArea: React.FC<SecureTextAreaProps> = ({
   maxLength = 2000,
   disabled = false,
   className = '',
+  error,
   onValueChange,
 }) => {
   const [internalValue, setInternalValue] = useState<string>(value ?? '');
@@ -67,8 +69,13 @@ export const SecureTextArea: React.FC<SecureTextAreaProps> = ({
         rows={rows}
         maxLength={maxLength}
         disabled={disabled}
-        className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none ${className}`}
+        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none ${
+          error ? 'border-red-500 bg-red-50' : 'border-gray-300'
+        } ${className}`}
       />
+      {error && (
+        <p className="mt-1 text-sm text-red-600">{error}</p>
+      )}
       <div className="mt-1 text-xs text-gray-500 text-right">Pozostało znaków: {remaining}</div>
     </div>
   );

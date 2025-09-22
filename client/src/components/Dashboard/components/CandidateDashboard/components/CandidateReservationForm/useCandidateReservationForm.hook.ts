@@ -30,6 +30,77 @@ export const useCandidateReservationForm = (onSuccess: (data: CandidateFormData)
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadingFiles, setUploadingFiles] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof CandidateFormData, string>>>({});
+
+  const isValidPesel = useCallback((value: string): boolean => {
+    if (!/^\d{11}$/.test(value)) return false;
+    const weights = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3];
+    const digits = value.split('').map(d => parseInt(d, 10));
+    const sum = weights.reduce((acc, w, i) => acc + w * digits[i], 0);
+    const control = (10 - (sum % 10)) % 10;
+    return control === digits[10];
+  }, []);
+
+  const isValidEmail = useCallback((value: string): boolean => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }, []);
+
+  const isValidPhone = useCallback((value: string): boolean => {
+    return /^\+?\d{9,15}$/.test(value);
+  }, []);
+
+  const validateField = useCallback((field: keyof CandidateFormData, value: string): string | null => {
+    const trimmedValue = value.trim();
+    
+    if (!trimmedValue) {
+      return 'To pole jest wymagane.';
+    }
+
+    switch (field) {
+      case 'pesel':
+        return !isValidPesel(trimmedValue) ? 'Nieprawidłowy numer PESEL (musi mieć 11 cyfr i poprawną sumę kontrolną).' : null;
+      case 'email':
+        return !isValidEmail(trimmedValue) ? 'Nieprawidłowy adres e-mail.' : null;
+      case 'phone':
+        return !isValidPhone(trimmedValue) ? 'Nieprawidłowy numer telefonu (dozwolone 9-15 cyfr, opcjonalnie +).' : null;
+      case 'topic':
+        return trimmedValue.length < 3 ? 'Temat wizyty powinien mieć co najmniej 3 znaki.' : null;
+      case 'description':
+        return trimmedValue.length < 10 ? 'Opis wizyty powinien mieć co najmniej 10 znaków.' : null;
+      case 'date':
+      case 'time':
+        if (formData.date && formData.time) {
+          const candidateDateTime = new Date(`${formData.date}T${formData.time}:00`);
+          const now = new Date();
+          if (isNaN(candidateDateTime.getTime()) || candidateDateTime <= now) {
+            return 'Data i godzina wizyty muszą być w przyszłości.';
+          }
+        }
+        return null;
+      default:
+        return null;
+    }
+  }, [formData.date, formData.time, isValidEmail, isValidPesel, isValidPhone]);
+
+  const validate = useCallback((): string | null => {
+    const required: Array<keyof CandidateFormData> = ['firstName','lastName','pesel','email','phone','date','time','topic','description'];
+    const errors: Partial<Record<keyof CandidateFormData, string>> = {};
+    
+    for (const key of required) {
+      const error = validateField(key, formData[key] || '');
+      if (error) {
+        errors[key] = error;
+      }
+    }
+
+    setFieldErrors(errors);
+    
+    if (Object.keys(errors).length > 0) {
+      return 'Proszę poprawić błędy w formularzu.';
+    }
+    
+    return null;
+  }, [formData, validateField]);
 
   const timeOptions = useMemo(() => {
     const times: string[] = [];
@@ -50,6 +121,11 @@ export const useCandidateReservationForm = (onSuccess: (data: CandidateFormData)
     setIsSubmitting(true);
     setError(null);
     try {
+      const validationError = validate();
+      if (validationError) {
+        setError(validationError);
+        return;
+      }
       const reservationRequest = {
         date: formData.date,
         time: formData.time,
@@ -78,12 +154,20 @@ export const useCandidateReservationForm = (onSuccess: (data: CandidateFormData)
       setIsSubmitting(false);
       setUploadingFiles(false);
     }
-  }, [formData, onSuccess, selectedFiles]);
+  }, [formData, onSuccess, selectedFiles, validate]);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-  }, []);
+    
+    // Walidacja w czasie rzeczywistym
+    const fieldName = name as keyof CandidateFormData;
+    const error = validateField(fieldName, value);
+    setFieldErrors(prev => ({
+      ...prev,
+      [fieldName]: error || undefined
+    }));
+  }, [validateField]);
 
   const handleFileSelect = useCallback((files: FileList | null) => {
     if (!files) return;
@@ -139,6 +223,7 @@ export const useCandidateReservationForm = (onSuccess: (data: CandidateFormData)
     dragOver,
     timeOptions,
     today,
+    fieldErrors,
     handleSubmit,
     handleChange,
     handleFileSelect,
