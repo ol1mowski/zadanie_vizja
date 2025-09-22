@@ -1,9 +1,10 @@
 type Props = {
   onCreate: () => void;
   onOpenReservations: () => void;
+  onOpenProfile: () => void;
 };
 
-export const StudentQuickActions: React.FC<Props> = ({ onCreate, onOpenReservations }) => {
+export const StudentQuickActions: React.FC<Props> = ({ onCreate, onOpenReservations, onOpenProfile }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200 hover:shadow-lg transition duration-200 cursor-pointer">
@@ -69,6 +70,28 @@ export const StudentQuickActions: React.FC<Props> = ({ onCreate, onOpenReservati
           className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
         >
           Zobacz Historię
+        </button>
+      </div>
+
+      <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-6 rounded-lg border border-indigo-200 hover:shadow-lg transition duration-200 cursor-pointer">
+        <div className="flex items-center mb-4">
+          <div className="bg-indigo-500 p-3 rounded-lg">
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-indigo-900 ml-3">
+            Mój Profil
+          </h3>
+        </div>
+        <p className="text-indigo-700 text-sm mb-4">
+          Przeglądaj i zarządzaj swoimi danymi osobowymi
+        </p>
+        <button 
+          onClick={onOpenProfile}
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+        >
+          Zobacz Profil
         </button>
       </div>
     </div>

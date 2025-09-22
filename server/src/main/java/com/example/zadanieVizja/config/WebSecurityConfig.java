@@ -41,6 +41,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/auth/me").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/auth/student/profile").hasRole("STUDENT")
                 .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/reservations/student").hasRole("STUDENT")
                 .requestMatchers(HttpMethod.POST, "/api/reservations/student").hasRole("STUDENT")

@@ -16,6 +16,13 @@ export interface UserInfo {
   role: string;
 }
 
+export interface StudentProfileData {
+  username: string;
+  studentAlbumNumber: string;
+  email: string | null;
+  role: string;
+}
+
 export const authApi = {
   login: async (data: LoginRequest): Promise<LoginResponse> => {
     const response = await fetch(`${API_BASE}/api/auth/login`, {
@@ -51,6 +58,18 @@ export const authApi = {
     
     if (!response.ok) {
       throw new Error('Failed to get user info');
+    }
+    
+    return response.json();
+  },
+
+  getStudentProfile: async (): Promise<StudentProfileData> => {
+    const response = await fetch(`${API_BASE}/api/auth/student/profile`, {
+      credentials: 'include'
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to get student profile');
     }
     
     return response.json();

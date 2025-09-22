@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.zadanieVizja.dto.StudentProfileResponse;
 import com.example.zadanieVizja.entity.User;
 import com.example.zadanieVizja.repository.UserRepository;
 import com.example.zadanieVizja.security.JwtService;
@@ -137,6 +138,31 @@ public class AuthController {
                 "username", username,
                 "role", role
         ));
+    }
+
+    @GetMapping("/student/profile")
+    public ResponseEntity<StudentProfileResponse> getStudentProfile() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return ResponseEntity.status(401).build();
+        }
+        
+        String username = auth.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Użytkownik nie znaleziony"));
+        
+        // Wyciągnij numer albumu z username (usuń prefix "student_")
+        String albumNumber = username.startsWith("student_") ? 
+                username.substring("student_".length()) : username;
+        
+        StudentProfileResponse profile = new StudentProfileResponse(
+                username,
+                albumNumber,
+                user.getEmail(),
+                user.getRole()
+        );
+        
+        return ResponseEntity.ok(profile);
     }
 }
 
