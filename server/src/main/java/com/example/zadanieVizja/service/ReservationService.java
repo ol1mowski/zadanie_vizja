@@ -1,9 +1,9 @@
 package com.example.zadanieVizja.service;
 
+import java.util.List;
+
 import com.example.zadanieVizja.dto.ReservationRequest;
 import com.example.zadanieVizja.dto.ReservationResponse;
-
-import java.util.List;
 
 public interface ReservationService {
     ReservationResponse createByStudent(String username, ReservationRequest request);

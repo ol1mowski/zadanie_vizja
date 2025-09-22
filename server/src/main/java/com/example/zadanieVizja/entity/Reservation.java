@@ -49,15 +49,12 @@ public class Reservation {
     @Column(nullable = false)
     private ReservationStatus status;
 
-    // If created by logged student
     @ManyToOne(fetch = FetchType.LAZY)
     private User student;
 
-    // If created by candidate
     @OneToOne(cascade = CascadeType.ALL)
     private CandidateData candidateData;
 
-    // Assigned employee (admin)
     @ManyToOne(fetch = FetchType.LAZY)
     private User assignedEmployee;
 }

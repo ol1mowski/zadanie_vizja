@@ -33,34 +33,39 @@ public class ReservationController {
     @PostMapping("/student")
     public ResponseEntity<ReservationResponse> createByStudent(@RequestHeader("X-Username") String username,
                                                                @Valid @RequestBody ReservationRequest request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                reservationService.createByStudent(username, request)
+        );
     }
 
     @PostMapping("/candidate")
     public ResponseEntity<ReservationResponse> createByCandidate(@Valid @RequestBody ReservationRequest request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                reservationService.createByCandidate(request)
+        );
     }
 
     @GetMapping("/student")
     public ResponseEntity<List<ReservationResponse>> listOwnForStudent(@RequestHeader("X-Username") String username) {
-        return ResponseEntity.ok(List.of());
+        return ResponseEntity.ok(reservationService.listOwnForStudent(username));
     }
 
     @GetMapping("/unassigned")
     public ResponseEntity<List<ReservationResponse>> listUnassigned() {
-        return ResponseEntity.ok(List.of());
+        return ResponseEntity.ok(reservationService.listUnassigned());
     }
 
     @PostMapping("/{id}/assign")
     public ResponseEntity<ReservationResponse> assign(@RequestHeader("X-Username") String username,
                                                       @PathVariable("id") Long id) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return ResponseEntity.ok(reservationService.assignToEmployee(username, id));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancel(@RequestHeader("X-Username") String username,
                        @PathVariable("id") Long id) {
+        reservationService.cancelByOwner(username, id);
     }
 }
 
