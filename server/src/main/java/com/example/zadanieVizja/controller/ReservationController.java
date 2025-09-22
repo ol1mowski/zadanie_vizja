@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,8 +31,9 @@ public class ReservationController {
     }
 
     @PostMapping("/student")
-    public ResponseEntity<ReservationResponse> createByStudent(@RequestHeader("X-Username") String username,
-                                                               @Valid @RequestBody ReservationRequest request) {
+    public ResponseEntity<ReservationResponse> createByStudent(@Valid @RequestBody ReservationRequest request,
+                                                               Authentication auth) {
+        String username = auth.getName();
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 reservationService.createByStudent(username, request)
         );
@@ -46,7 +47,8 @@ public class ReservationController {
     }
 
     @GetMapping("/student")
-    public ResponseEntity<List<ReservationResponse>> listOwnForStudent(@RequestHeader("X-Username") String username) {
+    public ResponseEntity<List<ReservationResponse>> listOwnForStudent(Authentication auth) {
+        String username = auth.getName();
         return ResponseEntity.ok(reservationService.listOwnForStudent(username));
     }
 
@@ -63,8 +65,8 @@ public class ReservationController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cancel(@RequestHeader("X-Username") String username,
-                       @PathVariable("id") Long id) {
+    public void cancel(@PathVariable("id") Long id, Authentication auth) {
+        String username = auth.getName();
         reservationService.cancelByOwner(username, id);
     }
 }

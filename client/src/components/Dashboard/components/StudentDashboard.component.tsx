@@ -1,8 +1,67 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser } from '../../../contexts/UserContext';
+import { CreateReservationForm } from './StudentDashboard/CreateReservationForm';
+import { ReservationsList } from './StudentDashboard/ReservationsList';
+import { reservationsApi, type ReservationResponse } from '../../../api/reservations';
+
+type ViewType = 'dashboard' | 'create' | 'reservations';
 
 export const StudentDashboard: React.FC = () => {
   const { logout } = useUser();
+  const [currentView, setCurrentView] = useState<ViewType>('dashboard');
+  const [reservations, setReservations] = useState<ReservationResponse[]>([]);
+  const [stats, setStats] = useState({
+    upcoming: 0,
+    completed: 0,
+    pending: 0
+  });
+
+  useEffect(() => {
+    if (currentView === 'dashboard') {
+      loadStats();
+    }
+  }, [currentView]);
+
+  const loadStats = async () => {
+    try {
+      const data = await reservationsApi.getStudentReservations();
+      setReservations(data);
+      
+      const now = new Date();
+      const upcoming = data.filter(r => {
+        const reservationDate = new Date(`${r.date}T${r.time}`);
+        return reservationDate >= now && r.status !== 'CANCELLED' && r.status !== 'COMPLETED';
+      }).length;
+      
+      const completed = data.filter(r => r.status === 'COMPLETED').length;
+      const pending = data.filter(r => r.status === 'PENDING').length;
+      
+      setStats({ upcoming, completed, pending });
+    } catch (err) {
+      console.error('Failed to load stats:', err);
+    }
+  };
+
+  const handleCreateSuccess = () => {
+    setCurrentView('dashboard');
+    loadStats(); // Refresh stats
+  };
+
+  if (currentView === 'create') {
+    return (
+      <CreateReservationForm
+        onSuccess={handleCreateSuccess}
+        onCancel={() => setCurrentView('dashboard')}
+      />
+    );
+  }
+
+  if (currentView === 'reservations') {
+    return (
+      <ReservationsList onBack={() => setCurrentView('dashboard')} />
+    );
+  }
+
   return (
     <div>
       <div className="mb-8 flex justify-between items-start">
@@ -37,7 +96,10 @@ export const StudentDashboard: React.FC = () => {
           <p className="text-blue-700 text-sm mb-4">
             Wybierz termin i zarezerwuj wizytę z pracownikiem biura
           </p>
-          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+          <button 
+            onClick={() => setCurrentView('create')}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+          >
             Rozpocznij Rezerwację
           </button>
         </div>
@@ -56,7 +118,10 @@ export const StudentDashboard: React.FC = () => {
           <p className="text-green-700 text-sm mb-4">
             Przeglądaj i zarządzaj swoimi zarezerwowanymi wizytami
           </p>
-          <button className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+          <button 
+            onClick={() => setCurrentView('reservations')}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+          >
             Zobacz Wizyty
           </button>
         </div>
@@ -75,7 +140,10 @@ export const StudentDashboard: React.FC = () => {
           <p className="text-purple-700 text-sm mb-4">
             Przeglądaj historię swoich zakończonych wizyt
           </p>
-          <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+          <button 
+            onClick={() => setCurrentView('reservations')}
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+          >
             Zobacz Historię
           </button>
         </div>
@@ -91,7 +159,7 @@ export const StudentDashboard: React.FC = () => {
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Nadchodzące wizyty</p>
-              <p className="text-2xl font-semibold text-gray-900">3</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.upcoming}</p>
             </div>
           </div>
         </div>
@@ -105,7 +173,7 @@ export const StudentDashboard: React.FC = () => {
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Zakończone wizyty</p>
-              <p className="text-2xl font-semibold text-gray-900">12</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.completed}</p>
             </div>
           </div>
         </div>
@@ -119,7 +187,7 @@ export const StudentDashboard: React.FC = () => {
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Oczekujące</p>
-              <p className="text-2xl font-semibold text-gray-900">1</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.pending}</p>
             </div>
           </div>
         </div>
