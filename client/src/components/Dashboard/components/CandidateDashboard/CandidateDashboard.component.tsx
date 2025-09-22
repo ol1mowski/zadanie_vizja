@@ -5,6 +5,7 @@ import { useCandidateDashboard } from './hooks/useCandidateDashboard.hook';
 import { CandidateQuickCard } from './components/CandidateQuickCard.component';
 import { CandidateInfoBox } from './components/CandidateInfoBox.component';
 import { CandidateHelpBox } from './components/CandidateHelpBox.component';
+import { Link } from 'react-router-dom';
 
 export const CandidateDashboard: React.FC = () => {
   const { logout } = useUser();
@@ -41,12 +42,14 @@ export const CandidateDashboard: React.FC = () => {
             Zarezerwuj wizytę wypełniając formularz z danymi identyfikacyjnymi
           </p>
         </div>
+        <Link to="/">
         <button 
           onClick={logout}
           className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
         >
           Powrót
         </button>
+        </Link>
       </div>
 
       <CandidateQuickCard onStart={openForm} />
