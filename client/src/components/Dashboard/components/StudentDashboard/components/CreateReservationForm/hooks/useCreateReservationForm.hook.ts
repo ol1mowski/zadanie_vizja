@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { reservationsApi, type CreateReservationRequest, type ReservationResponse } from '../../../../../../../api/reservations';
+import { useToast } from '../../../../../../Toast/ToastProvider';
 
 type UseCreateReservationFormArgs = {
   onSuccess: () => void;
@@ -17,6 +18,7 @@ export const useCreateReservationForm = ({ onSuccess }: UseCreateReservationForm
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadingFiles, setUploadingFiles] = useState<boolean>(false);
   const [dragOver, setDragOver] = useState(false);
+  const { showToast } = useToast();
 
   const today = useMemo(() => new Date().toISOString().split('T')[0], []);
 
@@ -94,14 +96,16 @@ export const useCreateReservationForm = ({ onSuccess }: UseCreateReservationForm
           await reservationsApi.uploadAttachment(reservation.id, file);
         }
       }
+      showToast('Rezerwacja została utworzona', 'success');
       onSuccess();
     } catch (err) {
       setError('Nie udało się utworzyć rezerwacji. Spróbuj ponownie.');
+      showToast('Nie udało się utworzyć rezerwacji', 'error');
     } finally {
       setIsSubmitting(false);
       setUploadingFiles(false);
     }
-  }, [formData, onSuccess, selectedFiles]);
+  }, [formData, onSuccess, selectedFiles, showToast]);
 
   return {
     formData,

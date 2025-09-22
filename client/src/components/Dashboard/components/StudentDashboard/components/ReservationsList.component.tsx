@@ -6,6 +6,7 @@ import { ReservationsHeaderBar } from './ReservationsList/HeaderBar.component';
 import { ReservationsTabs } from './ReservationsList/Tabs.component';
 import { ReservationItem } from './ReservationsList/ReservationItem.component';
 import { ListEmptyState } from './ReservationsList/ListEmptyState.component';
+import { useToast } from '../../../../Toast/ToastProvider';
 
 interface ReservationsListProps {
   onBack: () => void;
@@ -18,6 +19,8 @@ export const ReservationsList: React.FC<ReservationsListProps> = ({ onBack }) =>
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
   const [cancelModalOpen, setCancelModalOpen] = useState<boolean>(false);
   const [reservationToCancel, setReservationToCancel] = useState<ReservationResponse | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     loadReservations();
@@ -41,18 +44,22 @@ export const ReservationsList: React.FC<ReservationsListProps> = ({ onBack }) =>
 
   const handleCancelConfirm = async () => {
     if (!reservationToCancel) return;
-    
+    setIsCancelling(true);
     try {
       await reservationsApi.cancelReservation(reservationToCancel.id);
       await loadReservations(); 
       setCancelModalOpen(false);
       setReservationToCancel(null);
+      showToast('Wizyta została anulowana', 'success');
     } catch (err) {
-      alert('Nie udało się anulować rezerwacji. Spróbuj ponownie.');
+      showToast('Nie udało się anulować wizyty', 'error');
+    } finally {
+      setIsCancelling(false);
     }
   };
 
   const handleCancelModalClose = () => {
+    if (isCancelling) return;
     setCancelModalOpen(false);
     setReservationToCancel(null);
   };
@@ -118,6 +125,7 @@ export const ReservationsList: React.FC<ReservationsListProps> = ({ onBack }) =>
         reservationTopic={reservationToCancel?.topic || ''}
         reservationDate={reservationToCancel?.date || ''}
         reservationTime={reservationToCancel?.time || ''}
+        isLoading={isCancelling}
       />
     </motion.div>
   );
