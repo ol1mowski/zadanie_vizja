@@ -1,3 +1,3 @@
 export { LoginForm } from './LoginForm.component';
-export type { LoginFormData, LoginFormProps } from './LoginForm.types';
-export { useLoginForm } from './LoginForm.hook';
+export type { LoginFormData, LoginFormProps } from './types/LoginForm.types';
+export { useLoginForm } from './hooks/LoginForm.hook';

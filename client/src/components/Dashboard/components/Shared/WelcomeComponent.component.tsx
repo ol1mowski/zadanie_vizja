@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useUser } from '../../../../contexts/UserContext';
 import { LoginForm } from '../Auth/LoginForm.component';
-import type { LoginFormData } from '../Auth/LoginForm.types';
+import type { LoginFormData } from '../Auth/types/LoginForm.types';
 
 export const WelcomeComponent: React.FC = () => {
   const { login } = useUser();

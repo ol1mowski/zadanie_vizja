@@ -1,13 +1,15 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLoginForm } from './LoginForm.hook';
-import type { LoginFormProps } from './LoginForm.types';
+import { useLoginForm } from './hooks/LoginForm.hook';
+import type { LoginFormProps } from './types/LoginForm.types';
 import {
   LoginFormHeader,
   LoginFormField,
   LoginFormButtons,
   LoginFormInfo
-} from './LoginForm.components';
+} from './components';
+
+
 
 export const LoginForm: React.FC<LoginFormProps> = ({
   isOpen,
