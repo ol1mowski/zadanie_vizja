@@ -38,8 +38,7 @@ Techniczne zadanie – aplikacja do rezerwacji spotkań z rolami (Student/Admini
 ### Backend lokalnie
 ```bash
 cd server
-mvn clean test
-mvn spring-boot:run
+./mvnw spring-boot:run
 # backend na http://localhost:8080
 ```
 
@@ -92,7 +91,7 @@ Przykład: `feat(reservations): add cancel toast and API error handling`
 Uruchomienie lokalne:
 ```bash
 cd server
-mvn test
+./mvnw test
 ```
 Pokryte komponenty (wybór):
 - `ReservationController`, `AuthController`, `AttachmentController`, `NotificationController`
