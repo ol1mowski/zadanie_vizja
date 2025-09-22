@@ -9,6 +9,7 @@ export interface AdminLoginData {
 export interface AdminLoginErrors {
   email?: string;
   password?: string;
+  server?: string;
 }
 
 export const useAdminLogin = () => {
@@ -53,6 +54,14 @@ export const useAdminLogin = () => {
         [name]: undefined
       }));
     }
+    
+    // Clear server error when user starts typing
+    if (errors.server) {
+      setErrors((prev) => ({
+        ...prev,
+        server: undefined
+      }));
+    }
   }, [errors]);
 
   const handleSubmit = useCallback(async (
@@ -66,7 +75,9 @@ export const useAdminLogin = () => {
         await onSubmit(formData);
         onClose();
       } catch (error) {
-        // Error will be handled by the parent component
+        // Handle server error
+        const errorMessage = error instanceof Error ? error.message : 'Wystąpił błąd podczas logowania';
+        setErrors(prev => ({ ...prev, server: errorMessage }));
         console.error('Admin login error:', error);
       }
     }

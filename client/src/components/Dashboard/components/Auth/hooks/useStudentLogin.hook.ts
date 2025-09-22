@@ -9,6 +9,7 @@ export interface StudentLoginData {
 export interface StudentLoginErrors {
   albumNumber?: string;
   password?: string;
+  server?: string;
 }
 
 export const useStudentLogin = () => {
@@ -53,6 +54,14 @@ export const useStudentLogin = () => {
         [name]: undefined
       }));
     }
+    
+    // Clear server error when user starts typing
+    if (errors.server) {
+      setErrors((prev) => ({
+        ...prev,
+        server: undefined
+      }));
+    }
   }, [errors]);
 
   const handleSubmit = useCallback(async (
@@ -66,7 +75,9 @@ export const useStudentLogin = () => {
         await onSubmit(formData);
         onClose();
       } catch (error) {
-        // Error will be handled by the parent component
+        // Handle server error
+        const errorMessage = error instanceof Error ? error.message : 'Wystąpił błąd podczas logowania';
+        setErrors(prev => ({ ...prev, server: errorMessage }));
         console.error('Student login error:', error);
       }
     }

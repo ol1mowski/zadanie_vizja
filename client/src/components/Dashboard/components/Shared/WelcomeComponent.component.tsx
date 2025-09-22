@@ -27,8 +27,13 @@ export const WelcomeComponent: React.FC = () => {
       userType: data.userType
     };
     
-    await login(loginData);
-    await redirectAfterLogin();
+    try {
+      await login(loginData);
+      await redirectAfterLogin();
+    } catch (error) {
+      // Error will be handled by the login form hook
+      throw error;
+    }
   };
 
   const handleAdminLoginSubmit = async (data: AdminLoginData) => {
@@ -38,8 +43,13 @@ export const WelcomeComponent: React.FC = () => {
       userType: data.userType
     };
     
-    await login(loginData);
-    await redirectAfterLogin();
+    try {
+      await login(loginData);
+      await redirectAfterLogin();
+    } catch (error) {
+      // Error will be handled by the login form hook
+      throw error;
+    }
   };
 
   const redirectAfterLogin = async () => {
