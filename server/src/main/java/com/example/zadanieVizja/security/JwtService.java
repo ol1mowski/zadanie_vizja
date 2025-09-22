@@ -3,12 +3,13 @@ package com.example.zadanieVizja.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -26,7 +27,7 @@ public class JwtService {
             @Value("${jwt.issuer}") String issuer,
             @Value("${jwt.expiration-minutes}") int expirationMinutes
     ) {
-        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(Decoders.BASE64.encode(secret.getBytes())));
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.issuer = issuer;
         this.expirationMinutes = expirationMinutes;
     }
