@@ -1,8 +1,7 @@
 package com.example.zadanieVizja.exception;
 
-import java.time.Instant;
-import java.util.Map;
-
+import com.example.zadanieVizja.dto.ErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,43 +15,49 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private ResponseEntity<Map<String, Object>> build(HttpStatus status, String message) {
-        return ResponseEntity.status(status).body(Map.of(
-            "timestamp", Instant.now().toString(),
-            "status", status.value(),
-            "error", status.getReasonPhrase(),
-            "message", message
-        ));
+    private ResponseEntity<ErrorResponse> build(HttpStatus status, String message, String path) {
+        return ResponseEntity.status(status)
+                .body(new ErrorResponse(status.value(), status.getReasonPhrase(), message, path));
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleNotFound(NoHandlerFoundException ex) {
-        return build(HttpStatus.NOT_FOUND, "Nie znaleziono zasobu: " + ex.getRequestURL());
+    public ResponseEntity<ErrorResponse> handleNotFound(NoHandlerFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "Nie znaleziono zasobu: " + ex.getRequestURL(), request.getRequestURI());
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<Map<String, Object>> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
-        return build(HttpStatus.METHOD_NOT_ALLOWED, "Metoda nieobsługiwana: " + ex.getMethod());
+    public ResponseEntity<ErrorResponse> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
+        return build(HttpStatus.METHOD_NOT_ALLOWED, "Metoda nieobsługiwana: " + ex.getMethod(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusiness(BusinessException ex, HttpServletRequest request) {
+        return build(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler({ MethodArgumentNotValidException.class, BindException.class, IllegalArgumentException.class })
-    public ResponseEntity<Map<String, Object>> handleValidation(Exception ex) {
-        return build(HttpStatus.BAD_REQUEST, "Nieprawidłowe dane wejściowe");
+    public ResponseEntity<ErrorResponse> handleValidation(Exception ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Nieprawidłowe dane wejściowe", request.getRequestURI());
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<Map<String, Object>> handleBadCredentials(BadCredentialsException ex) {
-        return build(HttpStatus.UNAUTHORIZED, "Błędne dane logowania");
+    public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex, HttpServletRequest request) {
+        return build(HttpStatus.UNAUTHORIZED, "Błędne dane logowania", request.getRequestURI());
     }
 
     @ExceptionHandler(SecurityException.class)
-    public ResponseEntity<Map<String, Object>> handleSecurity(SecurityException ex) {
-        return build(HttpStatus.FORBIDDEN, "Brak uprawnień");
+    public ResponseEntity<ErrorResponse> handleSecurity(SecurityException ex, HttpServletRequest request) {
+        return build(HttpStatus.FORBIDDEN, "Brak uprawnień", request.getRequestURI());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGeneral(Exception ex) {
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Wystąpił nieoczekiwany błąd");
+    public ResponseEntity<ErrorResponse> handleGeneral(Exception ex, HttpServletRequest request) {
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Wystąpił nieoczekiwany błąd", request.getRequestURI());
     }
 }
 
