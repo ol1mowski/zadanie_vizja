@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { reservationsApi, type ReservationResponse } from '../../../../api/reservations';
 import { AttachmentsList } from '../AttachmentsList';
+import { CancelConfirmModal } from '../CancelConfirmModal';
 
 interface ReservationsListProps {
   onBack: () => void;
@@ -12,6 +13,8 @@ export const ReservationsList: React.FC<ReservationsListProps> = ({ onBack }) =>
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
+  const [cancelModalOpen, setCancelModalOpen] = useState<boolean>(false);
+  const [reservationToCancel, setReservationToCancel] = useState<ReservationResponse | null>(null);
 
   useEffect(() => {
     loadReservations();
@@ -28,15 +31,27 @@ export const ReservationsList: React.FC<ReservationsListProps> = ({ onBack }) =>
     }
   };
 
-  const handleCancel = async (id: number) => {
-    if (!confirm('Czy na pewno chcesz anulować tę rezerwację?')) return;
+  const handleCancelClick = (reservation: ReservationResponse) => {
+    setReservationToCancel(reservation);
+    setCancelModalOpen(true);
+  };
+
+  const handleCancelConfirm = async () => {
+    if (!reservationToCancel) return;
     
     try {
-      await reservationsApi.cancelReservation(id);
+      await reservationsApi.cancelReservation(reservationToCancel.id);
       await loadReservations(); // Refresh list
+      setCancelModalOpen(false);
+      setReservationToCancel(null);
     } catch (err) {
-      alert('Nie udało się anulować rezerwacji');
+      alert('Nie udało się anulować rezerwacji. Spróbuj ponownie.');
     }
+  };
+
+  const handleCancelModalClose = () => {
+    setCancelModalOpen(false);
+    setReservationToCancel(null);
   };
 
   const now = new Date();
@@ -197,7 +212,7 @@ export const ReservationsList: React.FC<ReservationsListProps> = ({ onBack }) =>
 
                   {activeTab === 'upcoming' && reservation.status !== 'CANCELLED' && (
                     <button
-                      onClick={() => handleCancel(reservation.id)}
+                      onClick={() => handleCancelClick(reservation)}
                       className="ml-4 px-3 py-1 text-sm text-red-600 hover:text-red-800 border border-red-300 hover:border-red-400 rounded transition-colors"
                     >
                       Anuluj
@@ -225,6 +240,16 @@ export const ReservationsList: React.FC<ReservationsListProps> = ({ onBack }) =>
           )}
         </div>
       </div>
+
+      {/* Cancel Confirmation Modal */}
+      <CancelConfirmModal
+        isOpen={cancelModalOpen}
+        onClose={handleCancelModalClose}
+        onConfirm={handleCancelConfirm}
+        reservationTopic={reservationToCancel?.topic || ''}
+        reservationDate={reservationToCancel?.date || ''}
+        reservationTime={reservationToCancel?.time || ''}
+      />
     </motion.div>
   );
 };
