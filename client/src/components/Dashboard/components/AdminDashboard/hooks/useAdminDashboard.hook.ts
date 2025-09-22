@@ -12,7 +12,6 @@ type ViewType = 'dashboard' | 'unassigned' | 'my-reservations';
 export const useAdminDashboard = () => {
   const [currentView, setCurrentView] = useState<ViewType>('dashboard');
 
-
   const navigateToView = useCallback((view: ViewType) => {
     setCurrentView(view);
   }, []);
