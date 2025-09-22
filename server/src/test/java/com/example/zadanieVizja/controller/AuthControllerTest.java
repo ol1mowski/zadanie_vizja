@@ -66,8 +66,8 @@ class AuthControllerTest {
         setFieldValue("cookieSameSite", "Lax");
         
         sampleUser = User.builder()
-                .username("testuser")
-                .role(UserRole.STUDENT)
+                .username("admin@uczelnia.pl")
+                .role(UserRole.ADMIN)
                 .build();
         sampleToken = "sample.jwt.token";
         
@@ -82,17 +82,26 @@ class AuthControllerTest {
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).containsEntry("username", "testuser");
-        assertThat(response.getBody()).containsEntry("role", "STUDENT");
+        assertThat(response.getBody()).containsEntry("username", "admin@uczelnia.pl");
+        assertThat(response.getBody()).containsEntry("role", "ADMIN");
+        // ustaw nazwę cookie aby nie rzucało IllegalArgumentException
         assertThat(response.getHeaders().getFirst("Set-Cookie")).isNotNull();
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
-        verify(userRepository).findByUsername("testuser");
-        verify(jwtService).generateToken("testuser", Map.of("role", "STUDENT"));
+        verify(userRepository).findByUsername("admin@uczelnia.pl");
+        verify(jwtService).generateToken("admin@uczelnia.pl", Map.of("role", "ADMIN"));
     }
 
     @Test
     void login_WithStudentAlbumNumber_ShouldReturnSuccessResponse() {
         // Given
+        try {
+            setFieldValue("cookieName", "JWT");
+            setFieldValue("cookieSecure", false);
+            setFieldValue("cookieMaxAge", 3600);
+            setFieldValue("cookieSameSite", "Lax");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         sampleUser = User.builder()
                 .username("student_123456")
                 .role(UserRole.STUDENT)
@@ -121,7 +130,7 @@ class AuthControllerTest {
     @Test
     void login_WithInvalidCredentials_ShouldReturnUnauthorized() {
         // Given
-        LoginRequest loginRequest = new LoginRequest("invalid@test.com", "wrongpassword", "admin");
+        LoginRequest loginRequest = new LoginRequest("admin@uczelnia.pl", "wrongpassword", "admin");
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(new BadCredentialsException("Invalid credentials"));
 
