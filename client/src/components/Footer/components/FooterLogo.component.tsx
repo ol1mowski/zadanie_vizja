@@ -9,7 +9,7 @@ export const FooterLogo: React.FC = () => {
         <h3 className="ml-2 text-xl font-bold">Portal Rezerwacji Wizyt</h3>
       </div>
       <p className="text-gray-600 text-sm">
-        Internetowy system rezerwacji wizyt dla studentów, kandydatów i pracowników. 
+        Internetowy system rezerwacji wizyt dla studentów, kandydatów i pracowników. <br />
         Zarządzaj swoimi spotkaniami w prosty i intuicyjny sposób.
       </p>
     </div>
