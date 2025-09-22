@@ -9,7 +9,7 @@ interface UnassignedReservationsProps {
 
 export const UnassignedReservations: React.FC<UnassignedReservationsProps> = ({ onBack }) => {
   const [reservations, setReservations] = useState<ReservationResponse[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [assigningId, setAssigningId] = useState<number | null>(null);
 
@@ -57,7 +57,7 @@ export const UnassignedReservations: React.FC<UnassignedReservationsProps> = ({ 
   };
 
   const getReservationTypeIcon = (reservation: ReservationResponse) => {        
-    const isStudent = reservation.assignedEmployeeUsername !== undefined;
+    const isStudent = reservation.userType === 'STUDENT';
     
     if (isStudent) {
       return (
@@ -79,8 +79,7 @@ export const UnassignedReservations: React.FC<UnassignedReservationsProps> = ({ 
   };
 
   const getReservationType = (reservation: ReservationResponse) => {
-    const isStudent = reservation.assignedEmployeeUsername !== undefined;
-    return isStudent ? 'Student' : 'Kandydat';
+    return reservation.userType === 'STUDENT' ? 'Student' : 'Kandydat';
   };
 
   if (loading) {

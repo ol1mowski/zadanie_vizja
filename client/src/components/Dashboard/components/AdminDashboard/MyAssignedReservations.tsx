@@ -76,7 +76,7 @@ export const MyAssignedReservations: React.FC<MyAssignedReservationsProps> = ({ 
   };
 
   const getReservationTypeIcon = (reservation: ReservationResponse) => {
-    const isStudent = reservation.assignedEmployeeUsername !== undefined;
+    const isStudent = reservation.userType === 'STUDENT';
     
     if (isStudent) {
       return (
@@ -98,8 +98,7 @@ export const MyAssignedReservations: React.FC<MyAssignedReservationsProps> = ({ 
   };
 
   const getReservationType = (reservation: ReservationResponse) => {
-    const isStudent = reservation.assignedEmployeeUsername !== undefined;
-    return isStudent ? 'Student' : 'Kandydat';
+    return reservation.userType === 'STUDENT' ? 'Student' : 'Kandydat';
   };
 
   if (loading) {

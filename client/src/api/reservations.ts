@@ -36,6 +36,7 @@ export interface ReservationResponse {
   status: 'PENDING' | 'ASSIGNED' | 'CANCELLED' | 'COMPLETED';
   assignedEmployeeUsername?: string;
   attachments: AttachmentResponse[];
+  userType: 'STUDENT' | 'CANDIDATE';
 }
 
 export const reservationsApi = {

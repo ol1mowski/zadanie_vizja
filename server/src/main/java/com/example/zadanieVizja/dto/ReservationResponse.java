@@ -14,7 +14,8 @@ public record ReservationResponse(
         String description,
         ReservationStatus status,
         String assignedEmployeeUsername,
-        List<AttachmentResponse> attachments
+        List<AttachmentResponse> attachments,
+        String userType // "STUDENT" or "CANDIDATE"
 ) {}
 
 

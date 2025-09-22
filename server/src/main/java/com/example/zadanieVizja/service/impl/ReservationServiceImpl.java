@@ -177,6 +177,8 @@ public class ReservationServiceImpl implements ReservationService {
                 ))
                 .collect(Collectors.toList());
         
+        String userType = reservation.getStudent() != null ? "STUDENT" : "CANDIDATE";
+        
         return new ReservationResponse(
                 reservation.getId(),
                 reservation.getDate(),
@@ -185,7 +187,8 @@ public class ReservationServiceImpl implements ReservationService {
                 reservation.getDescription(),
                 reservation.getStatus(),
                 assigned,
-                attachments
+                attachments,
+                userType
         );
     }
 }
