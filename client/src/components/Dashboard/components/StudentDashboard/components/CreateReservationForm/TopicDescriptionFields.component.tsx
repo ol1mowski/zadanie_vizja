@@ -1,4 +1,5 @@
 import React from 'react';
+import { SecureTextArea } from '../../../../../../Form/SecureTextArea.component';
 
 type Props = {
   topic: string;
@@ -25,20 +26,19 @@ export const TopicDescriptionFields: React.FC<Props> = ({ topic, description = '
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Opis wizyty (opcjonalnie)
-        </label>
-        <textarea
-          name="description"
-          value={description}
-          onChange={onChange}
-          placeholder="Dodatkowe informacje dotyczące wizyty..."
-          rows={4}
-          maxLength={2000}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
-        />
-      </div>
+      <SecureTextArea
+        name="description"
+        label="Opis wizyty (opcjonalnie)"
+        value={description}
+        placeholder="Dodatkowe informacje dotyczące wizyty..."
+        rows={4}
+        maxLength={2000}
+        onValueChange={(name, value) =>
+          onChange({
+            target: { name, value },
+          } as unknown as React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)
+        }
+      />
     </>
   );
 };

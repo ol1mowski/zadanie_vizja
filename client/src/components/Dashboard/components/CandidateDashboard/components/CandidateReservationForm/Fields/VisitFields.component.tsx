@@ -1,4 +1,5 @@
 import React from 'react';
+import { SecureTextArea } from '../../../../../../Form/SecureTextArea.component';
 
 type Props = {
   date: string;
@@ -34,10 +35,17 @@ export const VisitFields: React.FC<Props> = ({ date, time, topic, description, t
         <input type="text" name="topic" value={topic} onChange={onChange} required maxLength={500} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Opis wizyty *</label>
-        <textarea name="description" value={description} onChange={onChange} required rows={4} maxLength={2000} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none" />
-      </div>
+      <SecureTextArea
+        name="description"
+        label="Opis wizyty *"
+        value={description}
+        required
+        rows={4}
+        maxLength={2000}
+        onValueChange={(name, value) =>
+          onChange({ target: { name, value } } as unknown as React.ChangeEvent<HTMLTextAreaElement>)
+        }
+      />
     </>
   );
 };
