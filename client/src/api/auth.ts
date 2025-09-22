@@ -26,6 +26,8 @@ export interface StudentProfileData {
 export interface AdminProfileData {
   username: string;
   email: string | null;
+  firstName: string | null;
+  lastName: string | null;
   role: string;
 }
 

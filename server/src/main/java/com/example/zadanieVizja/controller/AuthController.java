@@ -180,6 +180,8 @@ public class AuthController {
         AdminProfileResponse profile = new AdminProfileResponse(
                 user.getUsername(),
                 user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
                 user.getRole()
         );
 

@@ -42,11 +42,21 @@ public class DataInitializer implements CommandLineRunner {
 
     private void ensureUser(String username, String rawPassword, UserRole role) {
         if (userRepository.findByUsername(username).isEmpty()) {
-            User user = User.builder()
+            User.UserBuilder userBuilder = User.builder()
                     .username(username)
                     .passwordHash(passwordEncoder.encode(rawPassword))
-                    .role(role)
-                    .build();
+                    .role(role);
+            
+            // Dodaj dane personalne dla adminów
+            if (role == UserRole.ADMIN) {
+                if ("admin@uczelnia.pl".equals(username)) {
+                    userBuilder.firstName("Jan").lastName("Kowalski").email(username);
+                } else if ("pracownik@uczelnia.pl".equals(username)) {
+                    userBuilder.firstName("Anna").lastName("Nowak").email(username);
+                }
+            }
+            
+            User user = userBuilder.build();
             userRepository.save(user);
             System.out.println("Utworzono użytkownika: " + username + " (role: " + role + ")");
         }
@@ -68,9 +78,9 @@ public class DataInitializer implements CommandLineRunner {
 
     private void backfillExistingStudents() {
         for (User user : userRepository.findAll()) {
+            boolean changed = false;
+            
             if (user.getRole() == UserRole.STUDENT) {
-                boolean changed = false;
-
                 // Ustaw numer albumu, jeśli brak
                 if (user.getStudentAlbumNumber() == null || user.getStudentAlbumNumber().isBlank()) {
                     String username = user.getUsername();
@@ -88,12 +98,32 @@ public class DataInitializer implements CommandLineRunner {
                         changed = true;
                     }
                 }
-
-                if (changed) {
-                    userRepository.save(user);
-                    System.out.println("Zaktualizowano studenta: " + user.getUsername() +
-                            " (album: " + user.getStudentAlbumNumber() + ", email: " + user.getEmail() + ")");
+            } else if (user.getRole() == UserRole.ADMIN) {
+                // Backfill dla adminów
+                if (user.getEmail() == null || user.getEmail().isBlank()) {
+                    user.setEmail(user.getUsername());
+                    changed = true;
                 }
+                
+                if (user.getFirstName() == null || user.getFirstName().isBlank()) {
+                    if ("admin@uczelnia.pl".equals(user.getUsername())) {
+                        user.setFirstName("Jan");
+                        user.setLastName("Kowalski");
+                    } else if ("pracownik@uczelnia.pl".equals(user.getUsername())) {
+                        user.setFirstName("Anna");
+                        user.setLastName("Nowak");
+                    } else {
+                        user.setFirstName("Administrator");
+                        user.setLastName("System");
+                    }
+                    changed = true;
+                }
+            }
+
+            if (changed) {
+                userRepository.save(user);
+                System.out.println("Zaktualizowano użytkownika: " + user.getUsername() + 
+                        " (email: " + user.getEmail() + ", imię: " + user.getFirstName() + ")");
             }
         }
     }

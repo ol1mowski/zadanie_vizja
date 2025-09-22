@@ -38,6 +38,8 @@ public class User {
 
     private String studentAlbumNumber;
     private String email;
+    private String firstName;
+    private String lastName;
 }
 
 
