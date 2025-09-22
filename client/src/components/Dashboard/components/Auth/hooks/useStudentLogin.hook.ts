@@ -46,8 +46,7 @@ export const useStudentLogin = () => {
       ...prev,
       [name]: value
     }));
-
-    // Clear error when user starts typing
+    
     if (errors[name as keyof StudentLoginErrors]) {
       setErrors((prev) => ({
         ...prev,
@@ -55,7 +54,6 @@ export const useStudentLogin = () => {
       }));
     }
     
-    // Clear server error when user starts typing
     if (errors.server) {
       setErrors((prev) => ({
         ...prev,
@@ -75,7 +73,6 @@ export const useStudentLogin = () => {
         await onSubmit(formData);
         onClose();
       } catch (error) {
-        // Handle server error
         const errorMessage = error instanceof Error ? error.message : 'Wystąpił błąd podczas logowania';
         setErrors(prev => ({ ...prev, server: errorMessage }));
         console.error('Student login error:', error);

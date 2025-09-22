@@ -47,7 +47,6 @@ export const useAdminLogin = () => {
       [name]: value
     }));
 
-    // Clear error when user starts typing
     if (errors[name as keyof AdminLoginErrors]) {
       setErrors((prev) => ({
         ...prev,
@@ -55,7 +54,6 @@ export const useAdminLogin = () => {
       }));
     }
     
-    // Clear server error when user starts typing
     if (errors.server) {
       setErrors((prev) => ({
         ...prev,
@@ -75,7 +73,6 @@ export const useAdminLogin = () => {
         await onSubmit(formData);
         onClose();
       } catch (error) {
-        // Handle server error
         const errorMessage = error instanceof Error ? error.message : 'Wystąpił błąd podczas logowania';
         setErrors(prev => ({ ...prev, server: errorMessage }));
         console.error('Admin login error:', error);
