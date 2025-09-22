@@ -1,0 +1,26 @@
+# Maven output
+/target
+
+# Logs
+*.log
+
+# IDE
+.classpath
+.project
+.settings/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Node (if any accidentally copied)
+node_modules/
+
+# H2 database files (mounted via volume in compose)
+/data/
