@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.zadanieVizja.dto.NotificationResponse;
+import com.example.zadanieVizja.entity.CandidateData;
 import com.example.zadanieVizja.entity.Notification;
 import com.example.zadanieVizja.entity.NotificationType;
 import com.example.zadanieVizja.entity.Reservation;
@@ -35,17 +36,30 @@ public class NotificationServiceImpl implements NotificationService {
             return; 
         }
 
-        String studentInfo = reservation.getStudent() != null 
-            ? reservation.getStudent().getEmail() 
-            : "Kandydat";
+        String userInfo;
+        String title;
+        
+        if (reservation.getStudent() != null) {
+            // Student reservation
+            userInfo = "studenta " + reservation.getStudent().getEmail();
+            title = "Wizyta studenta została anulowana";
+        } else if (reservation.getCandidateData() != null) {
+            // Candidate reservation
+            CandidateData candidate = reservation.getCandidateData();
+            userInfo = "kandydata " + candidate.getFirstName() + " " + candidate.getLastName() + " (" + candidate.getEmail() + ")";
+            title = "Wizyta kandydata została anulowana";
+        } else {
+            // Fallback
+            userInfo = "nieznanego użytkownika";
+            title = "Wizyta została anulowana";
+        }
 
-        String title = "Wizyta została anulowana";
         String message = String.format(
             "Wizyta '%s' zaplanowana na %s o %s została anulowana przez %s. %s",
             reservation.getTopic(),
             reservation.getDate(),
             reservation.getTime(),
-            studentInfo,
+            userInfo,
             reservation.getDescription() != null && !reservation.getDescription().isEmpty() 
                 ? "Opis: " + reservation.getDescription() 
                 : ""

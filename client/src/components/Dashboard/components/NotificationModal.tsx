@@ -50,23 +50,27 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
     };
   };
 
-  // Extract reservation details from notification message
-  const parseNotificationMessage = (message: string) => {
-    // Example message: "Wizyta 'Złożenie podania' zaplanowana na 2024-01-15 o 10:00 została anulowana przez student1@example.edu. Opis: ..."
-    const topicMatch = message.match(/Wizyta '([^']+)'/);
-    const dateMatch = message.match(/zaplanowana na (\d{4}-\d{2}-\d{2})/);
-    const timeMatch = message.match(/o (\d{2}:\d{2})/);
-    const userMatch = message.match(/została anulowana przez ([^.]+)/);
-    const descMatch = message.match(/Opis: (.+)$/);
+   const parseNotificationMessage = (message: string) => {
+     const topicMatch = message.match(/Wizyta '([^']+)'/);
+     const dateMatch = message.match(/zaplanowana na (\d{4}-\d{2}-\d{2})/);
+     const timeMatch = message.match(/o (\d{2}:\d{2})/);
+     const userMatch = message.match(/została anulowana przez ([^.]+)/);
+     const descMatch = message.match(/Opis: (.+)$/);
 
-    return {
-      topic: topicMatch ? topicMatch[1] : 'Nieznany temat',
-      date: dateMatch ? dateMatch[1] : '',
-      time: timeMatch ? timeMatch[1] : '',
-      user: userMatch ? userMatch[1] : 'Nieznany użytkownik',
-      description: descMatch ? descMatch[1] : null
-    };
-  };
+     // Determine if it's student or candidate based on the user info
+     const userInfo = userMatch ? userMatch[1] : 'Nieznany użytkownik';
+     const isCandidate = userInfo.includes('kandydata');
+     const isStudent = userInfo.includes('studenta');
+
+     return {
+       topic: topicMatch ? topicMatch[1] : 'Nieznany temat',
+       date: dateMatch ? dateMatch[1] : '',
+       time: timeMatch ? timeMatch[1] : '',
+       user: userInfo,
+       userType: isCandidate ? 'Kandydat' : isStudent ? 'Student' : 'Nieznany',
+       description: descMatch ? descMatch[1] : null
+     };
+   };
 
   return (
     <AnimatePresence>
@@ -91,7 +95,6 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
             }}
             className="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 max-h-[80vh] overflow-hidden"
           >
-            {/* Header */}
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -120,7 +123,6 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
               </div>
             </div>
 
-            {/* Content */}
             <div className="p-6 max-h-96 overflow-y-auto">
               {notifications.length === 0 ? (
                 <div className="text-center py-8">
@@ -186,13 +188,29 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                                   </div>
                                 )}
                                 
-                                <div className="flex items-center">
-                                  <svg className="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                  </svg>
-                                  <span className="font-medium text-gray-700">Anulowane przez:</span>
-                                  <span className="ml-2 text-gray-900">{details.user}</span>
-                                </div>
+                                 <div className="flex items-center">
+                                   <svg className="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                   </svg>
+                                   <span className="font-medium text-gray-700">Anulowane przez:</span>
+                                   <span className="ml-2 text-gray-900">{details.user}</span>
+                                 </div>
+                                 
+                                 <div className="flex items-center">
+                                   <svg className="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a1.994 1.994 0 01-1.414.586H7a4 4 0 01-4-4V7a4 4 0 014-4z" />
+                                   </svg>
+                                   <span className="font-medium text-gray-700">Typ użytkownika:</span>
+                                   <span className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${
+                                     details.userType === 'Kandydat' 
+                                       ? 'bg-green-100 text-green-800' 
+                                       : details.userType === 'Student' 
+                                       ? 'bg-blue-100 text-blue-800' 
+                                       : 'bg-gray-100 text-gray-800'
+                                   }`}>
+                                     {details.userType}
+                                   </span>
+                                 </div>
                                 
                                 {details.description && (
                                   <div className="pt-2 border-t border-gray-100">
@@ -215,7 +233,6 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
               )}
             </div>
 
-            {/* Footer */}
             <div className="px-6 py-4 bg-gray-50 rounded-b-lg flex justify-end">
               <button
                 onClick={onClose}

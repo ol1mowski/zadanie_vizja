@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { reservationsApi } from '../../../../api/reservations';
 
 interface CandidateReservationFormProps {
-  onSuccess: () => void;
+  onSuccess: (data: CandidateFormData) => void;
   onCancel: () => void;
 }
 
@@ -69,7 +69,7 @@ export const CandidateReservationForm: React.FC<CandidateReservationFormProps> =
         }
       }
       
-      onSuccess();
+      onSuccess(formData);
     } catch (err) {
       setError('Nie udało się utworzyć rezerwacji. Spróbuj ponownie.');
     } finally {

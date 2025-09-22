@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useUser } from '../../../contexts/UserContext';
+import { Link } from 'react-router-dom';
 
 interface CandidateSuccessScreenProps {
   reservationData: {
@@ -23,11 +24,11 @@ export const CandidateSuccessScreen: React.FC<CandidateSuccessScreenProps> = ({
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 300, 
+        transition={{
+          type: "spring",
+          stiffness: 300,
           damping: 30,
-          duration: 0.5 
+          duration: 0.5
         }}
         className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8 text-center"
       >
@@ -97,14 +98,16 @@ export const CandidateSuccessScreen: React.FC<CandidateSuccessScreenProps> = ({
           transition={{ delay: 0.8 }}
           className="flex flex-col sm:flex-row justify-center gap-4"
         >
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={logout}
-            className="px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Powrót do Strony Głównej
-          </motion.button>
+          <Link to="/">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={logout}
+              className="px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Powrót do Strony Głównej
+            </motion.button>
+            </Link>
         </motion.div>
       </motion.div>
     </div>

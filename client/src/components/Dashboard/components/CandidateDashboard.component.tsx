@@ -9,13 +9,21 @@ export const CandidateDashboard: React.FC = () => {
   const [showSuccessScreen, setShowSuccessScreen] = useState(false);
   const [reservationData, setReservationData] = useState<any>(null);
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = (data: any) => {
+    setReservationData({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      subject: data.topic, 
+      preferredDate: data.date,
+      preferredTime: data.time
+    });
     setShowSuccessScreen(true);
     setIsFormOpen(false);
   };
 
-  if (showSuccessScreen) {
-    return <CandidateSuccessScreen reservationData={{}} />;
+  if (showSuccessScreen && reservationData) {
+    return <CandidateSuccessScreen reservationData={reservationData} />;
   }
 
   if (isFormOpen) {
