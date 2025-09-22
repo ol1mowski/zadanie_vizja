@@ -10,6 +10,8 @@ public interface ReservationService {
     ReservationResponse createByCandidate(ReservationRequest request);
     List<ReservationResponse> listOwnForStudent(String username);
     List<ReservationResponse> listUnassigned();
+    
+    List<ReservationResponse> listAssignedToEmployee(String username);
     ReservationResponse assignToEmployee(String username, Long reservationId);
     void cancelByOwner(String username, Long reservationId);
 }

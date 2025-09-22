@@ -44,5 +44,31 @@ export const reservationsApi = {
       credentials: 'include'
     });
     if (!response.ok) throw new Error('Failed to cancel reservation');
+  },
+
+  // Admin endpoints
+  getUnassignedReservations: async (): Promise<ReservationResponse[]> => {
+    const response = await fetch(`${API_BASE}/api/reservations/unassigned`, {
+      credentials: 'include'
+    });
+    if (!response.ok) throw new Error('Failed to fetch unassigned reservations');
+    return response.json();
+  },
+
+  assignReservation: async (id: number): Promise<ReservationResponse> => {
+    const response = await fetch(`${API_BASE}/api/reservations/${id}/assign`, {
+      method: 'POST',
+      credentials: 'include'
+    });
+    if (!response.ok) throw new Error('Failed to assign reservation');
+    return response.json();
+  },
+
+  getMyAssignedReservations: async (): Promise<ReservationResponse[]> => {
+    const response = await fetch(`${API_BASE}/api/reservations/admin/assigned`, {
+      credentials: 'include'
+    });
+    if (!response.ok) throw new Error('Failed to fetch assigned reservations');
+    return response.json();
   }
 };

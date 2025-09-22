@@ -100,6 +100,16 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<ReservationResponse> listAssignedToEmployee(String username) {
+        User employee = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found: " + username));
+        return reservationRepository.findByAssignedEmployee(employee).stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ReservationResponse assignToEmployee(String username, Long reservationId) {
         User employee = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found: " + username));

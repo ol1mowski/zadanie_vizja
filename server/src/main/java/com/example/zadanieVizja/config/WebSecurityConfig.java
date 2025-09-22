@@ -45,6 +45,7 @@ public class WebSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/reservations/student").hasRole("STUDENT")
                 .requestMatchers(HttpMethod.POST, "/api/reservations/student").hasRole("STUDENT")
                 .requestMatchers("/api/reservations/unassigned").hasRole("ADMIN")
+                .requestMatchers("/api/reservations/admin/assigned").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/reservations/*/assign").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/reservations/*").authenticated()
                 .anyRequest().permitAll()

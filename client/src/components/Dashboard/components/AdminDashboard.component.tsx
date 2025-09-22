@@ -1,8 +1,61 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser } from '../../../contexts/UserContext';
+import { UnassignedReservations } from './AdminDashboard/UnassignedReservations';
+import { MyAssignedReservations } from './AdminDashboard/MyAssignedReservations';
+import { reservationsApi } from '../../../api/reservations';
+
+type ViewType = 'dashboard' | 'unassigned' | 'my-reservations';
 
 export const AdminDashboard: React.FC = () => {
   const { logout } = useUser();
+  const [currentView, setCurrentView] = useState<ViewType>('dashboard');
+  const [stats, setStats] = useState({
+    unassigned: 0,
+    myReservations: 0,
+    today: 0,
+    completed: 0
+  });
+
+  useEffect(() => {
+    if (currentView === 'dashboard') {
+      loadStats();
+    }
+  }, [currentView]);
+
+  const loadStats = async () => {
+    try {
+      const [unassignedData, myData] = await Promise.all([
+        reservationsApi.getUnassignedReservations(),
+        reservationsApi.getMyAssignedReservations()
+      ]);
+
+      const today = new Date().toISOString().split('T')[0];
+      const todayReservations = myData.filter(r => r.date === today && r.status === 'ASSIGNED').length;
+      const completedReservations = myData.filter(r => r.status === 'COMPLETED').length;
+
+      setStats({
+        unassigned: unassignedData.length,
+        myReservations: myData.filter(r => r.status === 'ASSIGNED').length,
+        today: todayReservations,
+        completed: completedReservations
+      });
+    } catch (err) {
+      console.error('Failed to load stats:', err);
+    }
+  };
+
+  if (currentView === 'unassigned') {
+    return (
+      <UnassignedReservations onBack={() => setCurrentView('dashboard')} />
+    );
+  }
+
+  if (currentView === 'my-reservations') {
+    return (
+      <MyAssignedReservations onBack={() => setCurrentView('dashboard')} />
+    );
+  }
+
   return (
     <div>
       <div className="mb-8 flex justify-between items-start">
@@ -39,9 +92,12 @@ export const AdminDashboard: React.FC = () => {
           </p>
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-blue-600">Nowe rezerwacje:</span>
-            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">8</span>
+            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">{stats.unassigned}</span>
           </div>
-          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+          <button 
+            onClick={() => setCurrentView('unassigned')}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+          >
             Zobacz Rezerwacje
           </button>
         </div>
@@ -62,9 +118,12 @@ export const AdminDashboard: React.FC = () => {
           </p>
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-green-600">Przypisane wizyty:</span>
-            <span className="bg-green-200 text-green-800 px-2 py-1 rounded-full text-xs font-medium">5</span>
+            <span className="bg-green-200 text-green-800 px-2 py-1 rounded-full text-xs font-medium">{stats.myReservations}</span>
           </div>
-          <button className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+          <button 
+            onClick={() => setCurrentView('my-reservations')}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+          >
             Zarządzaj Wizytami
           </button>
         </div>
@@ -88,46 +147,6 @@ export const AdminDashboard: React.FC = () => {
           </button>
         </div>
       </div>
-
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition duration-200 cursor-pointer">
-          <div className="flex items-center mb-4">
-            <div className="bg-indigo-100 p-3 rounded-lg">
-              <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 ml-3">
-              Raporty i Statystyki
-            </h3>
-          </div>
-          <p className="text-gray-600 text-sm mb-4">
-            Generuj raporty dotyczące wizyt i wydajności
-          </p>
-          <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
-            Generuj Raporty
-          </button>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition duration-200 cursor-pointer">
-          <div className="flex items-center mb-4">
-            <div className="bg-orange-100 p-3 rounded-lg">
-              <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 ml-3">
-              Zarządzanie Użytkownikami
-            </h3>
-          </div>
-          <p className="text-gray-600 text-sm mb-4">
-            Zarządzaj kontami studentów i pracowników
-          </p>
-          <button className="w-full bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
-            Zarządzaj Użytkownikami
-          </button>
-        </div>
-      </div>
     
       <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
@@ -139,7 +158,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Nowe rezerwacje</p>
-              <p className="text-2xl font-semibold text-gray-900">8</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.unassigned}</p>
             </div>
           </div>
         </div>
@@ -153,7 +172,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Moje wizyty</p>
-              <p className="text-2xl font-semibold text-gray-900">5</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.myReservations}</p>
             </div>
           </div>
         </div>
@@ -167,7 +186,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Dziś</p>
-              <p className="text-2xl font-semibold text-gray-900">3</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.today}</p>
             </div>
           </div>
         </div>
@@ -181,7 +200,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Zakończone</p>
-              <p className="text-2xl font-semibold text-gray-900">24</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.completed}</p>
             </div>
           </div>
         </div>
