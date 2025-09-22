@@ -49,6 +49,7 @@ public class WebSecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/reservations/*/assign").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/reservations/*").authenticated()
                 .requestMatchers("/api/attachments/**").authenticated()
+                .requestMatchers("/api/notifications/**").authenticated()
                 .anyRequest().permitAll()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

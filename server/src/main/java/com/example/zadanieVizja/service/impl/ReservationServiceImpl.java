@@ -17,6 +17,7 @@ import com.example.zadanieVizja.entity.User;
 import com.example.zadanieVizja.entity.UserRole;
 import com.example.zadanieVizja.repository.ReservationRepository;
 import com.example.zadanieVizja.repository.UserRepository;
+import com.example.zadanieVizja.service.NotificationService;
 import com.example.zadanieVizja.service.ReservationService;
 
 @Service
@@ -25,10 +26,14 @@ public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
-    public ReservationServiceImpl(ReservationRepository reservationRepository, UserRepository userRepository) {
+    public ReservationServiceImpl(ReservationRepository reservationRepository, 
+                                UserRepository userRepository,
+                                NotificationService notificationService) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -147,31 +152,15 @@ public class ReservationServiceImpl implements ReservationService {
             throw new IllegalStateException("Only owner can cancel reservation");
         }
         
-        // Send notification to assigned employee if exists
+        // Create notification for assigned employee if exists
         if (reservation.getAssignedEmployee() != null) {
-            sendCancellationNotification(reservation);
+            notificationService.createCancellationNotification(reservation);
         }
         
         reservation.setStatus(ReservationStatus.CANCELLED);
         reservationRepository.save(reservation);
     }
 
-    private void sendCancellationNotification(Reservation reservation) {
-        // In a real application, this would send email/SMS/push notification
-        // For now, we'll just log it
-        String assignedEmployeeEmail = reservation.getAssignedEmployee().getEmail();
-        String studentInfo = reservation.getStudent() != null 
-            ? reservation.getStudent().getEmail() 
-            : "Kandydat";
-        
-        System.out.println("=== POWIADOMIENIE O ANULOWANIU WIZYTY ===");
-        System.out.println("Do: " + assignedEmployeeEmail);
-        System.out.println("Temat: Anulowanie wizyty - " + reservation.getTopic());
-        System.out.println("Treść: Wizyta zaplanowana na " + reservation.getDate() + " o " + reservation.getTime() + 
-                          " została anulowana przez " + studentInfo);
-        System.out.println("Szczegóły: " + reservation.getDescription());
-        System.out.println("=========================================");
-    }
 
     private ReservationResponse toResponse(Reservation reservation) {
         String assigned = reservation.getAssignedEmployee() != null

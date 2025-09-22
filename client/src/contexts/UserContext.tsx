@@ -25,22 +25,16 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const fetchUserRole = async () => {
     try {
-      console.log('Fetching user role...');
       const res = await fetch(`${API_BASE}/api/auth/me`, { credentials: 'include' });
-      console.log('Response status:', res.status);
       if (res.ok) {
         const data = await res.json();
-        console.log('User data:', data);
         const role = data.role === 'STUDENT' ? UserType.STUDENT : 
                      data.role === 'ADMIN' ? UserType.ADMIN : null;
         setAuth({ role, isLoading: false });
-        console.log('Set role to:', role);
       } else {
-        console.log('Failed to fetch user role');
         setAuth({ role: null, isLoading: false });
       }
     } catch (error) {
-      console.log('Error fetching user role:', error);
       setAuth({ role: null, isLoading: false });
     }
   };
@@ -53,7 +47,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       body: JSON.stringify({ username: email, password })
     });
     if (!res.ok) throw new Error('Błędne dane logowania');
-    console.log('Login successful, fetching user role...');
     await fetchUserRole();
   };
 
@@ -66,7 +59,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const value = useMemo<UserContextType>(() => {
-    console.log('UserContext value update, auth:', auth);
     return { auth, login, logout, refreshAuth: fetchUserRole };
   }, [auth]);
 

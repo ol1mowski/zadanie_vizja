@@ -18,7 +18,6 @@ export const AttachmentUpload: React.FC<AttachmentUploadProps> = ({
   const handleFileSelect = async (file: File) => {
     if (uploading || disabled) return;
 
-    // Validate file size (10MB max)
     if (file.size > 10 * 1024 * 1024) {
       alert('Plik jest za duży. Maksymalny rozmiar to 10MB.');
       return;
@@ -40,7 +39,6 @@ export const AttachmentUpload: React.FC<AttachmentUploadProps> = ({
     if (file) {
       handleFileSelect(file);
     }
-    // Reset input
     e.target.value = '';
   };
 

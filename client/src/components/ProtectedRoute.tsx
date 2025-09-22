@@ -13,7 +13,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredRole 
 }) => {
   const { auth } = useUser();
-  console.log('ProtectedRoute auth:', auth, 'requiredRole:', requiredRole);
 
   if (auth.isLoading) {
     return (
@@ -24,15 +23,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   if (!auth.role) {
-    console.log('No role, redirecting to /');
     return <Navigate to="/" replace />;
   }
 
   if (requiredRole && auth.role !== requiredRole) {
-    console.log('Role mismatch, redirecting to /');
     return <Navigate to="/" replace />;
   }
 
-  console.log('Access granted');
   return <>{children}</>;
 };

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useUser } from '../../../contexts/UserContext';
 import { UnassignedReservations } from './AdminDashboard/UnassignedReservations';
 import { MyAssignedReservations } from './AdminDashboard/MyAssignedReservations';
+import { NotificationBell } from './NotificationBell';
 import { reservationsApi } from '../../../api/reservations';
 
 type ViewType = 'dashboard' | 'unassigned' | 'my-reservations';
@@ -9,7 +10,12 @@ type ViewType = 'dashboard' | 'unassigned' | 'my-reservations';
 export const AdminDashboard: React.FC = () => {
   const { logout } = useUser();
   const [currentView, setCurrentView] = useState<ViewType>('dashboard');
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<{
+    unassigned: number;
+    myReservations: number;
+    today: number;
+    completed: number;
+  }>({
     unassigned: 0,
     myReservations: 0,
     today: 0,
@@ -67,12 +73,15 @@ export const AdminDashboard: React.FC = () => {
             Zarządzaj rezerwacjami i przypisuj wizyty do siebie
           </p>
         </div>
-        <button 
-          onClick={logout}
-          className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
-        >
-          Wyloguj
-        </button>
+        <div className="flex items-center space-x-4">
+          <NotificationBell />
+          <button 
+            onClick={logout}
+            className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+          >
+            Wyloguj
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

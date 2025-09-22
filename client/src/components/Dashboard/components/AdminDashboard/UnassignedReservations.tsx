@@ -30,12 +30,12 @@ export const UnassignedReservations: React.FC<UnassignedReservationsProps> = ({ 
   };
 
   const handleAssign = async (id: number) => {
-    if (assigningId) return; // Prevent multiple assignments
+    if (assigningId) return; 
     
     try {
       setAssigningId(id);
       await reservationsApi.assignReservation(id);
-      await loadReservations(); // Refresh list
+      await loadReservations(); 
     } catch (err) {
       alert('Nie udało się przypisać rezerwacji. Może już została przypisana lub masz konflikt terminów.');
     } finally {
@@ -56,8 +56,7 @@ export const UnassignedReservations: React.FC<UnassignedReservationsProps> = ({ 
     };
   };
 
-  const getReservationTypeIcon = (reservation: ReservationResponse) => {
-    // Student reservation has assignedEmployeeUsername field available but null
+  const getReservationTypeIcon = (reservation: ReservationResponse) => {        
     const isStudent = reservation.assignedEmployeeUsername !== undefined;
     
     if (isStudent) {
