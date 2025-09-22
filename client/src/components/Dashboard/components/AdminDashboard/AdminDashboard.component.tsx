@@ -24,7 +24,7 @@ export const AdminDashboard: React.FC = () => {
     <div>
       <AdminHeader onLogout={logout} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200 hover:shadow-lg transition duration-200 cursor-pointer">
           <div className="flex items-center mb-4">
             <div className="bg-blue-500 p-3 rounded-lg">
@@ -69,25 +69,7 @@ export const AdminDashboard: React.FC = () => {
           </button>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200 hover:shadow-lg transition duration-200 cursor-pointer">
-          <div className="flex items-center mb-4">
-            <div className="bg-purple-500 p-3 rounded-lg">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-purple-900 ml-3">
-              Kalendarz
-            </h3>
-          </div>
-          <p className="text-purple-700 text-sm mb-4">
-            Przeglądaj harmonogram wizyt w widoku kalendarza
-          </p>
-          <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
-            Otwórz Kalendarz
-          </button>
-        </div>
-      </div>
+       </div>
 
       <AdminStatsCards />
     </div>
