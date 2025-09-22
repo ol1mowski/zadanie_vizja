@@ -1,6 +1,6 @@
 import React from 'react';
 import type { ReservationResponse } from '../../../../../../../api/reservations';
-import { AttachmentsList } from '../../../../Attachments/AttachmentsList';
+import { AttachmentsList } from '../../../../Attachments/AttachmentsList.component';
 import { ReservationStatusBadge } from './ReservationStatusBadge.component';
 import { ReservationTypeIcon } from './ReservationTypeIcon.component';
 

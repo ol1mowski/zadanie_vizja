@@ -1,6 +1,6 @@
 import React from 'react';
 import type { ReservationResponse } from '../../../../../../../api/reservations';
-import { AttachmentsList } from '../../../../Attachments/AttachmentsList';
+import { AttachmentsList } from '../../../../Attachments/AttachmentsList.component';
 import { ReservationTypeIcon } from '../MyAssignedReservations/components/ReservationTypeIcon.component';
 
 interface UnassignedReservationItemProps {

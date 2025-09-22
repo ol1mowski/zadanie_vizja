@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { reservationsApi, type AttachmentResponse } from '../../../api/reservations';
+import React from 'react';
+import type { AttachmentResponse } from '../../../../api/reservations';
+import { useAttachmentUpload } from './hooks/useAttachmentUpload.hook';
 
 interface AttachmentUploadProps {
   reservationId: number;
@@ -12,55 +13,14 @@ export const AttachmentUpload: React.FC<AttachmentUploadProps> = ({
   onUploadSuccess,
   disabled = false
 }) => {
-  const [uploading, setUploading] = useState(false);
-  const [dragOver, setDragOver] = useState(false);
-
-  const handleFileSelect = async (file: File) => {
-    if (uploading || disabled) return;
-
-    if (file.size > 10 * 1024 * 1024) {
-      alert('Plik jest za duży. Maksymalny rozmiar to 10MB.');
-      return;
-    }
-
-    setUploading(true);
-    try {
-      const attachment = await reservationsApi.uploadAttachment(reservationId, file);
-      onUploadSuccess(attachment);
-    } catch (error) {
-      alert('Nie udało się przesłać pliku. Spróbuj ponownie.');
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      handleFileSelect(file);
-    }
-    e.target.value = '';
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(false);
-    
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      handleFileSelect(file);
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(false);
-  };
+  const {
+    uploading,
+    dragOver,
+    handleFileInput,
+    handleDrop,
+    handleDragOver,
+    handleDragLeave,
+  } = useAttachmentUpload(reservationId, onUploadSuccess, disabled);
 
   if (disabled) {
     return null;

@@ -1,3 +1,3 @@
-export { AttachmentsList } from './AttachmentsList';
-export { AttachmentUpload } from './AttachmentUpload';
+export { AttachmentsList } from './AttachmentsList.component';
+export { AttachmentUpload } from './AttachmentUpload.component';
 
