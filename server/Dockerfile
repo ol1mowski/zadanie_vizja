@@ -26,5 +26,3 @@ COPY --from=build /workspace/target/*.jar ${APP_HOME}/app.jar
 EXPOSE ${SERVER_PORT}
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar --server.port=${SERVER_PORT}"]
-
-
