@@ -153,7 +153,7 @@ class AuthControllerTest {
         setFieldValue("cookieSameSite", "Lax");
         
         // When
-        ResponseEntity<Void> response = authController.logout();
+        ResponseEntity<Void> response = authController.logout(); 
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);

@@ -12,7 +12,7 @@ interface AuthState {
 interface UserContextType {
   auth: AuthState;
   login: (payload: LoginPayload) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   refreshAuth: () => Promise<void>;
 }
 
@@ -53,13 +53,20 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       console.error('Błąd logowania:', errorData);
       throw new Error(errorData.error || 'Błędne dane logowania');
     }
-    const loginData = await res.json();
-    console.log('Dane logowania:', loginData);
     await fetchUserRole();
   };
 
-  const logout = () => {
-    setAuth({ role: null, isLoading: false });
+  const logout = async () => {
+    try {
+      await fetch(`${API_BASE}/api/auth/logout`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+    } catch (e) {
+      console.error('Błąd wylogowania:', e);
+    } finally {
+      setAuth({ role: null, isLoading: false });
+    }
   };
 
   useEffect(() => {
